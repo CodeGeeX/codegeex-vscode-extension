@@ -1,20 +1,22 @@
 ![codegeex_logo](https://lfs.aminer.cn/misc/wangshan/pretrain/codegeex/codegeex_logo.png)
 
-🌐 <a href="https://github.com/THUDM/CodeGeeX/blob/main/vscode-extension/README_zh.md" target="_blank">中文</a>
+🌐 <a href="https://github.com/CodeGeeX/codegeex-vscode-extension/blob/main/README_zh.md" target="_blank">中文</a>
 
 ![CodeGeeX license](https://img.shields.io/github/license/THUDM/CodeGeeX?colorA=0B9FE0&colorB=brightgreen)
 ![CodeGeeX vscode extension version](https://img.shields.io/visual-studio-marketplace/v/aminer.codegeex?colorA=0B9FE0&colorB=brightgreen)
 ![CodeGeeX download](https://img.shields.io/visual-studio-marketplace/d/aminer.codegeex?colorA=0B9FE0&colorB=brightgreen)
-![CodeGeeX API calls per week](https://img.shields.io/badge/dynamic/json?label=API%20calls&query=%24.result.count&suffix=%2Fweek&url=http%3A%2F%2Ftianqi.aminer.cn%2Fapi%2Fv1%2Fapi%2Fcodegeex%2Fdashboard%3Ftime_type%3Dweeks&colorA=0B9FE0&colorB=brightgreen)
 ![CodeGeeX vscode extension rating](https://img.shields.io/visual-studio-marketplace/stars/aminer.codegeex?colorA=0B9FE0&colorB=brightgreen)
 ![CodeGeeX vscode extension last update](https://img.shields.io/visual-studio-marketplace/last-updated/aminer.codegeex?colorA=0B9FE0&colorB=brightgreen)
 [![CodeGeeX github stars](https://img.shields.io/github/stars/THUDM/CodeGeeX?style=social)](https://github.com/THUDM/CodeGeeX)
 
-We introduce CodeGeeX, a open source large-scale multilingual code generation model with 13 billion parameters, pretrained on a large code corpus of more than 20 programming languages. With CodeGeeX, we can generate codes by only providing natural language descriptions, complete any code snippet, or translate codes to other programming languages, etc. CodeGeeX also provides customizable features (**Prompt Mode**) to help you configure your own programming assistant. Happy coding!
+We introduce CodeGeeX, an open source large-scale multilingual code generation model with 13 billion parameters, pretrained on a large code corpus of more than 20 programming languages. With CodeGeeX, we create an extension that can generate codes by only providing natural language descriptions, complete any code snippet, or translate codes to other programming languages, etc. CodeGeeX also provides customizable features (**Prompt Mode**) to help you configure your own programming assistant. Happy coding!
 
 For more information, please check out our [Homepage](https://models.aminer.cn/codegeex/) and [GitHub repo](https://github.com/THUDM/CodeGeeX). 
 
 Please kindly let us know if you encounter any problem or have any suggestion, via [codegeex@aminer.cn](mailto:codegeex@aminer.cn).
+
+## Extenstion Development
+CodeGeeX extension is fully open sourced and welcome to add new features to it. A simple developpment guidance can be found in [doc/quickstart.md](doc/quickstart.md).
 
 ## Basic Usage
 Make sure vscode version is >= 1.68.0. Install the extension and enable it globally. There are three modes of usage:

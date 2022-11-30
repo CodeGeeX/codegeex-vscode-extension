@@ -1,10 +1,20 @@
 ![codegeex_logo](https://lfs.aminer.cn/misc/wangshan/pretrain/codegeex/codegeex_logo.png)
 
+![CodeGeeX license](https://img.shields.io/github/license/THUDM/CodeGeeX?colorA=0B9FE0&colorB=brightgreen)
+![CodeGeeX vscode extension version](https://img.shields.io/visual-studio-marketplace/v/aminer.codegeex?colorA=0B9FE0&colorB=brightgreen)
+![CodeGeeX download](https://img.shields.io/visual-studio-marketplace/d/aminer.codegeex?colorA=0B9FE0&colorB=brightgreen)
+![CodeGeeX vscode extension rating](https://img.shields.io/visual-studio-marketplace/stars/aminer.codegeex?colorA=0B9FE0&colorB=brightgreen)
+![CodeGeeX vscode extension last update](https://img.shields.io/visual-studio-marketplace/last-updated/aminer.codegeex?colorA=0B9FE0&colorB=brightgreen)
+[![CodeGeeX github stars](https://img.shields.io/github/stars/THUDM/CodeGeeX?style=social)](https://github.com/THUDM/CodeGeeX)
+
 CodeGeeX是一个具有130亿参数的多编程语言代码生成预训练模型，使用超过二十种编程语言训练得到。基于CodeGeeX开发的插件可以实现通过描述生成代码、补全代码、代码翻译等一系列功能。CodeGeeX同样提供可以定制的**提示模式（Prompt Mode）**，构建专属的编程助手。Happy Coding！
 
 VS Code插件市场搜索"codegeex"即可免费使用，更多关于CodeGeeX信息请见我们的[主页](https://models.aminer.cn/codegeex/) and [GitHub仓库](https://github.com/THUDM/CodeGeeX)。
 
 如使用过程中遇到问题或有任何改进意见，欢迎发送邮件到[codegeex@aminer.cn](mailto:codegeex@aminer.cn)反馈！
+
+## 插件开发
+CodeGeeX是完全开源的，欢迎开发者们为插件添加新功能，[doc/quickstart_zh.md](doc/quickstart_zh.md)中可以找到简单的开发调试教程。
 
 ## 基本用法
 安装插件并全局激活CodeGeeX，有以下三种使用模式：
