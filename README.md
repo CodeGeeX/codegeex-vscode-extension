@@ -15,7 +15,7 @@ For more information, please check out our [Homepage](https://models.aminer.cn/c
 
 Please kindly let us know if you encounter any problem or have any suggestion, via [codegeex@aminer.cn](mailto:codegeex@aminer.cn).
 
-## Extenstion Development
+## Extension Development
 CodeGeeX extension is fully open sourced and welcome to add new features to it. A simple developpment guidance can be found in [doc/quickstart.md](doc/quickstart.md).
 
 ## Basic Usage
