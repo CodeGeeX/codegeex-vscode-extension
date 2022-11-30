@@ -17,4 +17,9 @@ This is a simple guidance for developping CodeGeeX extenstion (for VS Code), you
   - Enter "Run and Debug" mode in the left Activity Bar in VS Code，and click on ```Run Extension``` to launch the extenstion to debug.
   - If the source code is modified, press ```cmd+R``` to reload the extension。
 
+- **Generate VSIX Package**
+  - Use ```npm install -g vsce``` to install 
+  - Use ```vsce package``` to generate package in ```.vsix``` format.
+  - In VS Code Extension settings, choose ```Install from VSIX``` to install the generated package.
+  
 If you have suggestions or developped cool features for CodeGeeX, please raise issues and pull requests. Contact us: [codegeex@aminer.cn](mailto:codegeex@aminer.cn).

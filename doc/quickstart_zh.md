@@ -17,4 +17,9 @@
   - 在VS Code左侧菜单栏中进入“运行和调试”模式（Run and Debug），点击```Run Extension```即可进行调试。
   - 如果对插件代码进行更改，可以通过```cmd+R```重新加载插件。
 
+- **生成安装包**
+  - 通过```npm install -g vsce```安装打包工具
+  - 运行```vsce package```即可生成```.vsix```安装包。
+  - VS Code插件中选择```Install from VSIX```即可安装。
+
 如果您有任何建议或为CodeGeeX开发了有趣的新功能，欢迎提Issues和Pull Request。联系我们：[codegeex@aminer.cn](mailto:codegeex@aminer.cn)。
