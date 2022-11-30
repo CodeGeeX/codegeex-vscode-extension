@@ -12,3 +12,5 @@ src/localconfig.ts
 - **运行和调试**
 run extension
 # 您在运行和调试里面通过run extension即可运行插件，如果有更改，您可以通过cmd+R或者相应的按钮，重新加载插件
+
+# 您可以在https://tianqi.aminer.cn/ 上查询关于apikey和apisecret申请的相关内容。
