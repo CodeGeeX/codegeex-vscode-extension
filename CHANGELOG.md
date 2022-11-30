@@ -1,0 +1,47 @@
+# Change Log
+
+v1.0.7 (2022-11-28)
+
+- Add status bar command and user setting to disable specific languages
+
+- Add preference for user to decide generation code line by line or automatic
+
+- Add welcome page, new user will see the welcome page first when activate the extension or you can commmand it in command palette by codegeex.welcome-page
+
+- Fix some known issues
+
+v1.0.6 (2022-11-11)
+
+- Add new mode Translation mode for user to translate code
+
+- Add three parameters for user to change in order to get better code suggestions
+
+- Add commands of three other modes to the right click menu
+
+- Fix some known issues
+
+v1.0.5 (2022-11-04)
+
+- Add new command to get new suggestion
+
+- Add more information to the status bar
+
+v1.0.4 (2022-10-28)
+
+- Fixed some known issues
+
+v1.0.3 (2022-10-20)
+
+- Fixed some known issues
+
+v1.0.2 (2022-09-22)
+
+- Fixed some known issues
+
+v1.0.1 (2022-09-21)
+
+- Fixed some known issues
+
+v1.0.0 (2022-09-20)
+
+- Initial release
