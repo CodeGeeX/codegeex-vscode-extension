@@ -5,4 +5,3 @@ node_modules
 .vscode-test/
 *.vsix
 *.js.map
-src/localconfig.ts

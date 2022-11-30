@@ -1,4 +1,4 @@
-import { tianqiApiKey, tianqiApiSecret } from "../localconfig";
+import { tianqiApiKey, tianqiApiSecret,statsHerf } from "../localconfig";
 
 export const extensionId = "aminer.codegeex";
 export const extensionVersion = "1.0.7";
@@ -9,10 +9,7 @@ export const apiKey = tianqiApiKey;
 export const apiSecret = tianqiApiSecret;
 
 //api to do the statistics of data
-export const apiHerf =
-    process.env.NODE_ENV === "development"
-        ? "http://10.50.74.216:32621"
-        : "https://maas.aminer.cn";
+export const apiHerf = statsHerf;
 
 //language accepted by the model
 export const languageList = [

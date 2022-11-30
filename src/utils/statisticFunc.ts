@@ -3,12 +3,15 @@ import axios from "axios";
 import * as os from "os";
 //import welcomePage from './welcomePage';
 import { apiHerf, extensionId, extensionVersion } from "../param/constparams";
+import { enableStats } from "../localconfig";
+
 
 const privacy = vscode.workspace.getConfiguration("Codegeex").get("Privacy");
 
 export function getOpenExtensionData(): Promise<string> {
     return new Promise((resolve) => {
-        try {
+        if(enableStats){
+            try {
             axios
                 .post(`${apiHerf}/tracking/insertVscodeStartRecord`, {
                     vscodeMachineId: vscode.env.machineId,
@@ -34,6 +37,10 @@ export function getOpenExtensionData(): Promise<string> {
         } catch (e) {
             resolve("error");
         }
+        }else{
+            resolve("No stats");
+        }
+        
     });
 }
 export function getStartData(
@@ -43,25 +50,30 @@ export function getStartData(
     mode?: string
 ): Promise<string> {
     return new Promise((resolve) => {
-        const startParam = {
-            vscodeMachineId: vscode.env.machineId,
-            vscodeSessionId: vscode.env.sessionId,
-            requestPhase: "start",
-            inputContent: privacy ? inputText : null,
-            prompt: privacy ? prompt : null,
-            lang: lang,
-            mode: mode ? mode : null,
-        };
-        try {
-            axios
-                .post(`${apiHerf}/tracking/vsCodeOperationRecord`, startParam)
-                .then((res) => {
-                    console.log("开始请求测试", res);
-                    let commandid = res.data.data.id || "";
-                    resolve(commandid);
-                });
-        } catch (err) {
-            resolve("");
+        if(enableStats){
+
+            const startParam = {
+                vscodeMachineId: vscode.env.machineId,
+                vscodeSessionId: vscode.env.sessionId,
+                requestPhase: "start",
+                inputContent: privacy ? inputText : null,
+                prompt: privacy ? prompt : null,
+                lang: lang,
+                mode: mode ? mode : null,
+            };
+            try {
+                axios
+                    .post(`${apiHerf}/tracking/vsCodeOperationRecord`, startParam)
+                    .then((res) => {
+                        console.log("开始请求测试", res);
+                        let commandid = res.data.data.id || "";
+                        resolve(commandid);
+                    });
+            } catch (err) {
+                resolve("");
+            }
+        }else{
+            resolve('');
         }
     });
 }
@@ -73,25 +85,32 @@ export function getEndData(
     completions?: Array<string> | string
 ): Promise<string> {
     return new Promise((resolve) => {
-        let endparam = {
-            id: commandid,
-            requestPhase: "end",
-            outputContent: privacy ? acceptItem : null,
-            modelStatus: -1,
-            message: message, //err.message,
-            num: privacy ? completions?.length : 0,
-            numContent: privacy ? completions?.toString() : null,
-            whetherAdopt: isAdopted,
-        };
-        axios
-            .post(`${apiHerf}/tracking/vsCodeOperationRecord`, endparam)
-            .then((res) => {
-                console.log("测试结束埋点", res);
+        if(enableStats){
+
+            let endparam = {
+                id: commandid,
+                requestPhase: "end",
+                outputContent: privacy ? acceptItem : null,
+                modelStatus: -1,
+                message: message, //err.message,
+                num: privacy ? completions?.length : 0,
+                numContent: privacy ? completions?.toString() : null,
+                whetherAdopt: isAdopted,
+            };
+            try{
+    
+                axios
+                    .post(`${apiHerf}/tracking/vsCodeOperationRecord`, endparam)
+                    .then((res) => {
+                        console.log("测试结束埋点", res);
+                        resolve("");
+                    })
+            }catch(err){
                 resolve("");
-            })
-            .catch((e) => {
-                console.log("结束埋点错误", e);
-                resolve("");
-            });
+            }
+        }else{
+            resolve("");
+        }
+            
     });
 }
