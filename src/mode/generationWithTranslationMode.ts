@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import { hash, languageList } from "../param/constparams";
 import { codegeexCodeTranslation } from "../utils/codegeexCodeTranslation";
-import { getCommentSignal } from "../utils/commentCode";
 import { getCodeTranslation } from "../utils/getCodeTranslation";
 import getDocumentLanguage from "../utils/getDocumentLanguage";
 import { showQuickPick } from "../utils/showQuickPick";
@@ -40,18 +39,24 @@ export default async function generationWithTranslationMode(
                 true,
                 " Translating"
             );
-            let commandid = getStartData(
-                text,
-                text,
-                `${srcLang}->${dstLang}`,
-                "translation"
-            );
+            let commandid: string;
+            try{
+
+                commandid = await getStartData(
+                    text,
+                    text,
+                    `${srcLang}->${dstLang}`,
+                    "translation"
+                );
+            }catch(err){
+                commandid=''
+            }
             translation = await getCodeTranslation(text, srcLang, dstLang).then(
                 async (res) => {
                     await codegeexCodeTranslation(
                         dstLang,
                         res.translation[0].replaceAll("#", hash),
-                        await commandid
+                        commandid
                     ).then(() => {
                         updateStatusBarItem(
                             myStatusBarItem,

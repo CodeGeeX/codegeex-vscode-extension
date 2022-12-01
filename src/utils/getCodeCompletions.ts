@@ -95,7 +95,7 @@ export function getCodeCompletions(
         try {
             axios
                 .post(API_URL, payload, { httpsAgent: agent, timeout: 120000 })
-                .then((res) => {
+                .then(async (res) => {
                     console.log(res);
                     if (res?.data.status === 0) {
                         let codeArray = res?.data.result.output.code;
@@ -110,16 +110,20 @@ export function getCodeCompletions(
                         resolve({ completions, commandid });
                     } else {
                         console.log(res);
-                        getEndData(commandid, res.data.message, "No");
+                        try{
+                            
+                            await getEndData(commandid, res.data.message, "No");
+                        }catch(err){
+                            console.log(err);
+                        }
+                            
                         reject(res.data.message);
                     }
                 })
                 .catch((err) => {
-                    getEndData(commandid, err.message, "No");
                     reject(err);
                 });
         } catch (e) {
-            getEndData(commandid, "", "No");
             reject(e);
         }
     });

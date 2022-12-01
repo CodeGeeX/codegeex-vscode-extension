@@ -16,50 +16,21 @@ import getDocumentLanguage from "../utils/getDocumentLanguage";
 import { getGPTCode } from "../utils/getGPTCode";
 import { getCodeCompletions } from "../utils/getCodeCompletions";
 
-let myStatusBarItem: vscode.StatusBarItem;
-let g_isLoading: boolean;
-
-export const textDocumentProvider = new (class {
-    async provideTextDocumentContent(uri: vscode.Uri) {
-        const params = new URLSearchParams(uri.query);
-        if (params.get("loading") === "true") {
-            return `/* CodeGeeX is generating ... */\n`;
-        }
-        const mode = params.get("mode");
-
-        if (mode === "translation") {
-            let transResult = params.get("translation_res") || "";
-            transResult = transResult
-                .replaceAll(addSignal, "+")
-                .replaceAll(andSignal, "&");
-            console.log("transResult", transResult);
-            const editor = vscode.window.activeTextEditor;
-            if (!editor) {
-                vscode.window.showInformationMessage(
-                    "Please open a file first to use CodeGeeX."
-                );
-                return;
+export function textDocumentProvider(myStatusBarItem: vscode.StatusBarItem, g_isLoading: boolean) {
+    const textDocumentProvider = new (class {
+        async provideTextDocumentContent(uri: vscode.Uri) {
+            const params = new URLSearchParams(uri.query);
+            if (params.get("loading") === "true") {
+                return `/* CodeGeeX is generating ... */\n`;
             }
-            codelensProvider.clearEls();
-            let commandid = params.get("commandid") || "";
-            let commentSignal = getCommentSignal(editor.document.languageId);
-            transResult = transResult
-                .replaceAll(hash, "#")
-                .replaceAll(comment, commentSignal.line || "#");
-            codelensProvider.addEl(0, transResult, commandid, "translation");
-            return transResult;
-        } else {
-            let code_block = params.get("code_block") ?? "";
-
-            try {
-                code_block = code_block
-                    .replaceAll(hash, "#")
+            const mode = params.get("mode");
+    
+            if (mode === "translation") {
+                let transResult = params.get("translation_res") || "";
+                transResult = transResult
                     .replaceAll(addSignal, "+")
                     .replaceAll(andSignal, "&");
-                // 'lang': 'Python',
-                if (code_block.length > 1200) {
-                    code_block = code_block.slice(code_block.length - 1200);
-                }
+                console.log("transResult", transResult);
                 const editor = vscode.window.activeTextEditor;
                 if (!editor) {
                     vscode.window.showInformationMessage(
@@ -67,51 +38,80 @@ export const textDocumentProvider = new (class {
                     );
                     return;
                 }
-                let payload = {};
-                const num = candidateNum;
-                let lang = getDocumentLanguage(editor);
-                if (lang.length == 0) {
-                    payload = {
-                        prompt: code_block,
-                        n: num,
-                        apikey: apiKey,
-                        apisecret: apiSecret,
-                    };
-                } else {
-                    payload = {
-                        lang: lang,
-                        prompt: code_block,
-                        n: num,
-                        apikey: apiKey,
-                        apisecret: apiSecret,
-                    };
-                }
-                // }
-                const agent = new https.Agent({
-                    rejectUnauthorized: false,
-                });
-                const { commandid, completions } = await getCodeCompletions(
-                    code_block,
-                    num,
-                    lang,
-                    apiKey,
-                    apiSecret,
-                    "interactive"
-                );
-                if (completions.length > 0) {
-                    return getGPTCode(
-                        completions,
-                        commandid,
-                        myStatusBarItem,
-                        g_isLoading
+                codelensProvider.clearEls();
+                let commandid = params.get("commandid") || "";
+                let commentSignal = getCommentSignal(editor.document.languageId);
+                transResult = transResult
+                    .replaceAll(hash, "#")
+                    .replaceAll(comment, commentSignal.line || "#");
+                codelensProvider.addEl(0, transResult, commandid, "translation");
+                return transResult;
+            } else {
+                let code_block = params.get("code_block") ?? "";
+    
+                try {
+                    code_block = code_block
+                        .replaceAll(hash, "#")
+                        .replaceAll(addSignal, "+")
+                        .replaceAll(andSignal, "&");
+                    // 'lang': 'Python',
+                    if (code_block.length > 1200) {
+                        code_block = code_block.slice(code_block.length - 1200);
+                    }
+                    const editor = vscode.window.activeTextEditor;
+                    if (!editor) {
+                        vscode.window.showInformationMessage(
+                            "Please open a file first to use CodeGeeX."
+                        );
+                        return;
+                    }
+                    let payload = {};
+                    const num = candidateNum;
+                    let lang = getDocumentLanguage(editor);
+                    if (lang.length == 0) {
+                        payload = {
+                            prompt: code_block,
+                            n: num,
+                            apikey: apiKey,
+                            apisecret: apiSecret,
+                        };
+                    } else {
+                        payload = {
+                            lang: lang,
+                            prompt: code_block,
+                            n: num,
+                            apikey: apiKey,
+                            apisecret: apiSecret,
+                        };
+                    }
+                    // }
+                    const agent = new https.Agent({
+                        rejectUnauthorized: false,
+                    });
+                    const { commandid, completions } = await getCodeCompletions(
+                        code_block,
+                        num,
+                        lang,
+                        apiKey,
+                        apiSecret,
+                        "interactive"
                     );
-                } else {
-                    return "No result to show";
+                    if (completions.length > 0) {
+                        return getGPTCode(
+                            completions,
+                            commandid,
+                            myStatusBarItem,
+                            g_isLoading
+                        );
+                    } else {
+                        return "No result to show";
+                    }
+                } catch (err) {
+                    console.log("Error sending request", err);
+                    return "There was an error sending the request\n" + err;
                 }
-            } catch (err) {
-                console.log("Error sending request", err);
-                return "There was an error sending the request\n" + err;
             }
         }
-    }
-})();
+    })();
+    return textDocumentProvider;    
+}

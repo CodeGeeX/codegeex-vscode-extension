@@ -22,7 +22,11 @@ let myStatusBarItem: vscode.StatusBarItem;
 
 export async function activate(context: vscode.ExtensionContext) {
     console.log('Congratulations, your extension "CodeGeeX" is now active!');
-    await getOpenExtensionData();
+    try {
+        await getOpenExtensionData();
+    } catch (err) {
+        console.error(err);
+    }
     context.subscriptions.push(
         vscode.commands.registerCommand("codegeex.welcome-page", async () => {
             await welcomePage(context);
@@ -33,6 +37,23 @@ export async function activate(context: vscode.ExtensionContext) {
     }
     checkPrivacy();
     let targetEditor: vscode.TextEditor;
+
+    const statusBarItemCommandId = "codegeex.disable-enable";
+    context.subscriptions.push(
+        vscode.commands.registerCommand("codegeex.disable-enable", () => {
+            disableEnable(myStatusBarItem, g_isLoading, originalColor);
+        })
+    );
+    // create a new status bar item that we can now manage
+    myStatusBarItem = vscode.window.createStatusBarItem(
+        vscode.StatusBarAlignment.Right,
+        100
+    );
+    myStatusBarItem.command = statusBarItemCommandId;
+    context.subscriptions.push(myStatusBarItem);
+    //initialiser statusbar
+    changeIconColor(enableExtension, myStatusBarItem, originalColor);
+    updateStatusBarItem(myStatusBarItem, g_isLoading, false, "");
 
     //subscribe interactive-mode command
     context.subscriptions.push(
@@ -88,7 +109,7 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.workspace.registerTextDocumentContentProvider(
             myScheme,
-            textDocumentProvider
+            textDocumentProvider(myStatusBarItem, g_isLoading)
         )
     );
     context.subscriptions.push(
@@ -107,29 +128,16 @@ export async function activate(context: vscode.ExtensionContext) {
         )
     );
 
-    const statusBarItemCommandId = "codegeex.disable-enable";
-    context.subscriptions.push(
-        vscode.commands.registerCommand("codegeex.disable-enable", () => {
-            disableEnable(myStatusBarItem, g_isLoading, originalColor);
-        })
-    );
-    // create a new status bar item that we can now manage
-    myStatusBarItem = vscode.window.createStatusBarItem(
-        vscode.StatusBarAlignment.Right,
-        100
-    );
-    myStatusBarItem.command = statusBarItemCommandId;
-    context.subscriptions.push(myStatusBarItem);
-    //initialiser statusbar
-    changeIconColor(enableExtension, myStatusBarItem, originalColor);
-    updateStatusBarItem(myStatusBarItem, g_isLoading, false, "");
-
     //command after insert a suggestion in stealth mode
     context.subscriptions.push(
         vscode.commands.registerCommand(
             "verifyInsertion",
-            (id, completions, acceptItem) => {
-                getEndData(id, "", "Yes", acceptItem, completions);
+            async (id, completions, acceptItem) => {
+                try {
+                    await getEndData(id, "", "Yes", acceptItem, completions);
+                } catch (err) {
+                    console.log(err);
+                }
             }
         )
     );

@@ -9,7 +9,7 @@ import { enableStats } from "../localconfig";
 const privacy = vscode.workspace.getConfiguration("Codegeex").get("Privacy");
 
 export function getOpenExtensionData(): Promise<string> {
-    return new Promise((resolve) => {
+    return new Promise((resolve,reject) => {
         if(enableStats){
             try {
             axios
@@ -32,10 +32,10 @@ export function getOpenExtensionData(): Promise<string> {
                     resolve(res.data.msg);
                 })
                 .catch((err) => {
-                    resolve("error");
+                    reject("error");
                 });
         } catch (e) {
-            resolve("error");
+            reject("error");
         }
         }else{
             resolve("No stats");
@@ -49,7 +49,7 @@ export function getStartData(
     lang: string,
     mode?: string
 ): Promise<string> {
-    return new Promise((resolve) => {
+    return new Promise((resolve,reject) => {
         if(enableStats){
 
             const startParam = {
@@ -70,10 +70,10 @@ export function getStartData(
                         resolve(commandid);
                     });
             } catch (err) {
-                resolve("");
+                reject("");
             }
         }else{
-            resolve('');
+            reject('');
         }
     });
 }
@@ -84,8 +84,11 @@ export function getEndData(
     acceptItem?: string | null,
     completions?: Array<string> | string
 ): Promise<string> {
-    return new Promise((resolve) => {
+    return new Promise((resolve,reject) => {
         if(enableStats){
+            if (commandid === "") {
+                reject("No command id");
+            }
 
             let endparam = {
                 id: commandid,
@@ -106,7 +109,7 @@ export function getEndData(
                         resolve("");
                     })
             }catch(err){
-                resolve("");
+                reject("");
             }
         }else{
             resolve("");

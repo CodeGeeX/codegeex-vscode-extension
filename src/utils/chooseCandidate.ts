@@ -14,7 +14,7 @@ export default function chooseCandidate(
     if (!targetEditor) return;
     try {
         targetEditor
-            .edit((editBuilder) => {
+            .edit(async (editBuilder) => {
                 var s = targetEditor.selection;
                 if (s.start.character == 0 && fn.slice(0, 1) == "\n") {
                     fn = fn.slice(1);
@@ -38,7 +38,12 @@ export default function chooseCandidate(
                 } else {
                     editBuilder.replace(s, fn);
                 }
-                getEndData(commandid, "", "Yes", fn);
+                try{
+
+                    await getEndData(commandid, "", "Yes", fn);
+                }catch(err){
+                    console.log(err)
+                }
             })
             .then((success) => {
                 var postion = targetEditor.selection.end;
