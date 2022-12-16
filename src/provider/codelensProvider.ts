@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { localeTag } from "../param/constparams";
 
 export const codelensProvider = new (class {
     codelenses: vscode.CodeLens[];
@@ -7,19 +8,17 @@ export const codelensProvider = new (class {
     }
     addEl(lineNum: number, text: string, commandid: string, mode?: string) {
         let range;
-        console.log(text[0] === "\n");
 
         range = new vscode.Range(lineNum, 0, lineNum, 0);
 
         this.codelenses.push(
             new vscode.CodeLens(range, {
-                title: "Use code",
+                title: localeTag.useCode,
                 command: "CodeGeeX.chooseCandidate",
                 arguments: [text, mode, commandid],
-                tooltip: "Choose this snippet",
+                tooltip: localeTag.chooseThisSnippet,
             })
         );
-        console.log(this.codelenses);
     }
     clearEls() {
         this.codelenses = [];

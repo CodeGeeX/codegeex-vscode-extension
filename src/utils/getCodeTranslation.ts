@@ -47,8 +47,6 @@ export function getCodeTranslation(
 
                         translation.push(translationStr);
                     }
-                    console.log("translation");
-                    console.log(translation);
                     resolve({ translation });
                 } else {
                     console.log(res);

@@ -1,8 +1,8 @@
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 import * as vscode from "vscode";
-import { myScheme } from "./param/constparams";
+import { localeTag, myScheme } from "./param/constparams";
 import { checkPrivacy } from "./utils/checkPrivacy";
-import { getEndData, getOpenExtensionData } from "./utils/statisticFunc";
+import { getEndData, getOpenExtensionData, getTotalRequestNum } from "./utils/statisticFunc";
 import { updateStatusBarItem } from "./utils/updateStatusBarItem";
 import { generateWithPromptMode } from "./mode/generationWithPrompMode";
 import welcomePage from "./welcomePage";
@@ -15,6 +15,8 @@ import { textDocumentProvider } from "./provider/textDocumentProvider";
 import inlineCompletionProvider from "./provider/inlineCompletionProvider";
 import { enableExtension } from "./param/configures";
 import changeIconColor from "./utils/changeIconColor";
+import { isCurrentLanguageDisable } from "./utils/isCurrentLanguageDisable";
+import survey from "./utils/survey";
 
 let g_isLoading = false;
 let originalColor: string | vscode.ThemeColor | undefined;
@@ -22,9 +24,10 @@ let myStatusBarItem: vscode.StatusBarItem;
 
 export async function activate(context: vscode.ExtensionContext) {
     console.log('Congratulations, your extension "CodeGeeX" is now active!');
-    try {
+    try{
+
         await getOpenExtensionData();
-    } catch (err) {
+    }catch(err){
         console.error(err);
     }
     context.subscriptions.push(
@@ -36,6 +39,7 @@ export async function activate(context: vscode.ExtensionContext) {
         vscode.commands.executeCommand("codegeex.welcome-page");
     }
     checkPrivacy();
+    survey();
     let targetEditor: vscode.TextEditor;
 
     const statusBarItemCommandId = "codegeex.disable-enable";
@@ -52,9 +56,8 @@ export async function activate(context: vscode.ExtensionContext) {
     myStatusBarItem.command = statusBarItemCommandId;
     context.subscriptions.push(myStatusBarItem);
     //initialiser statusbar
-    changeIconColor(enableExtension, myStatusBarItem, originalColor);
+    changeIconColor(enableExtension, myStatusBarItem, originalColor,isCurrentLanguageDisable());
     updateStatusBarItem(myStatusBarItem, g_isLoading, false, "");
-
     //subscribe interactive-mode command
     context.subscriptions.push(
         vscode.commands.registerCommand(
@@ -63,7 +66,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 const editor = vscode.window.activeTextEditor;
                 if (!editor) {
                     vscode.window.showInformationMessage(
-                        "Please open a file first to use CodeGeeX."
+                        localeTag.noEditorInfo
                     );
                     return;
                 }
@@ -82,7 +85,7 @@ export async function activate(context: vscode.ExtensionContext) {
             const editor = vscode.window.activeTextEditor;
             if (!editor) {
                 vscode.window.showInformationMessage(
-                    "Please open a file first to use CodeGeeX translation."
+                    localeTag.noEditorInfo
                 );
                 return;
             }
@@ -99,7 +102,7 @@ export async function activate(context: vscode.ExtensionContext) {
             const editor = vscode.window.activeTextEditor;
             if (!editor) {
                 vscode.window.showInformationMessage(
-                    "Please open a file first to use CodeGeeX translation."
+                    localeTag.noEditorInfo
                 );
                 return;
             }
@@ -109,7 +112,7 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.workspace.registerTextDocumentContentProvider(
             myScheme,
-            textDocumentProvider(myStatusBarItem, g_isLoading)
+            textDocumentProvider(myStatusBarItem,g_isLoading)
         )
     );
     context.subscriptions.push(
@@ -128,15 +131,17 @@ export async function activate(context: vscode.ExtensionContext) {
         )
     );
 
+    
     //command after insert a suggestion in stealth mode
     context.subscriptions.push(
         vscode.commands.registerCommand(
             "verifyInsertion",
             async (id, completions, acceptItem) => {
-                try {
+                try{
+
                     await getEndData(id, "", "Yes", acceptItem, completions);
-                } catch (err) {
-                    console.log(err);
+                }catch(err){
+                    console.log(err)
                 }
             }
         )
@@ -144,16 +149,24 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.languages.registerInlineCompletionItemProvider(
             { pattern: "**" },
-            inlineCompletionProvider(g_isLoading, myStatusBarItem, false)
+            inlineCompletionProvider(g_isLoading, myStatusBarItem, false,originalColor)
         )
     );
     context.subscriptions.push(
         vscode.commands.registerCommand("codegeex.new-completions", () => {
             vscode.languages.registerInlineCompletionItemProvider(
                 { pattern: "**" },
-                inlineCompletionProvider(g_isLoading, myStatusBarItem, true)
+                inlineCompletionProvider(g_isLoading, myStatusBarItem, true,originalColor)
             );
         })
     );
+    context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(e=>{
+        const editor = vscode.window.activeTextEditor;
+        if(editor){
+            changeIconColor(true,myStatusBarItem,originalColor,isCurrentLanguageDisable(),true)
+            
+        }
+    }))
+    
 }
 export function deactivate() {}

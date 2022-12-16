@@ -9,7 +9,7 @@
 		"url": "https://github.com/THUDM/CodeGeeX"
 	},
 	"icon": "codegeex_logo.png",
-	"version": "1.0.8",
+	"version": "1.0.9",
 	"engines": {
 		"vscode": "^1.68.0"
 	},
@@ -118,7 +118,20 @@
 					},
 					"Codegeex.EnableExtension":{
 						"type":"boolean",
-						"default":true
+						"default":true,
+						"description": "This will decide if you enable the stealth mode of the extension."
+					},
+					"Codegeex.Survey":{
+						"type":"boolean",
+						"default":null,
+						"markdownDescription": "This is decided by if you have chosen to make a survey. If you want to make the survey again, you can click the link:<br>[EN]:https://wj.qq.com/s2/11260705/6cd6/<br>[CN]:https://wj.qq.com/s2/11259178/fd49/"
+					},
+					"Codegeex.CompletionDelay":{
+						"type":"number",
+						"minimum": 0.5,
+						"default":0.5,
+						"description": "The delay in seconds to start getting completions without new change in the editor. You can change this value to get better experience in coding with our extension and to avoid some unuseful completion suggestions."
+
 					}
 				}
 			}
@@ -127,19 +140,23 @@
 			{
 				"command": "codegeex.interactive-mode",
 				"key": "ctrl+enter",
-				"mac": "ctrl+enter"
+				"mac": "ctrl+enter",
+				"when":"editorFocus && !editorReadonly"
 			},
 			{
 				"command": "codegeex.prompt-mode",
-				"key": "Alt+T"
+				"key": "Alt+T",
+				"when":"editorFocus && !editorReadonly"
 			},
 			{
 				"command": "codegeex.new-completions",
-				"key": "Alt+N"
+				"key": "Alt+N",
+				"when":"editorFocus && !editorReadonly"
 			},
 			{
 				"command": "codegeex.translate-mode",
-				"key": "Alt+ctrl+T"
+				"key": "Alt+ctrl+T",
+				"when":"editorFocus && !editorReadonly"
 			},
 			{
 				"command": "codegeex.welcome-page",

@@ -26,7 +26,6 @@ export default async function generationWithInteractiveMode(
         .replaceAll("#", hash)
         .replaceAll("+", addSignal)
         .replaceAll("&", andSignal);
-    console.log("code_block", code_block);
     updateStatusBarItem(myStatusBarItem, g_isLoading, true, "");
     await codegeexCodeGen(code_block.trim())
         .then(() =>

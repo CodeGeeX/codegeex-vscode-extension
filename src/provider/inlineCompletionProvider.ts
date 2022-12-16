@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { candidateNum, disabledFor } from "../param/configures";
+import { candidateNum, completionDelay, disabledFor } from "../param/configures";
 import { apiKey, apiSecret } from "../param/constparams";
 import { Trie } from "../trie";
 import { getCodeCompletions } from "../utils/getCodeCompletions";
@@ -10,6 +10,7 @@ let lastRequest = null;
 let trie = new Trie([]);
 let prompts: string[] = [];
 let someTrackingIdCounter = 0;
+let delay:number=completionDelay*1000;
 
 interface MyInlineCompletionItem extends vscode.InlineCompletionItem {
     trackingId: number;
@@ -17,7 +18,8 @@ interface MyInlineCompletionItem extends vscode.InlineCompletionItem {
 export default function inlineCompletionProvider(
     g_isLoading: boolean,
     myStatusBarItem: vscode.StatusBarItem,
-    reGetCompletions: boolean
+    reGetCompletions: boolean,
+    originalColor: string | vscode.ThemeColor | undefined,
 ) {
     const provider: vscode.InlineCompletionItemProvider = {
         provideInlineCompletionItems: async (
@@ -42,10 +44,6 @@ export default function inlineCompletionProvider(
             }
             let selection: vscode.Selection;
             const languageId = editor.document.languageId || "undefined";
-            console.log(disabledFor);
-            console.log(
-                vscode.workspace.getConfiguration("Codegeex.DisabledFor")
-            );
             if (
                 (disabledFor as any)[languageId] === true ||
                 (disabledFor as any)[languageId] === "true" ||
@@ -68,10 +66,8 @@ export default function inlineCompletionProvider(
                 for(let i = 0;i<currentCell;i++){
                     str+=cells[i].document.getText().trimEnd()+'\n'
                 }
-                console.log(str);
                 textBeforeCursor = str+textBeforeCursor;
             }
-            console.log('textBeforeCursor',textBeforeCursor);
             if (textBeforeCursor.trim() === "") {
                 updateStatusBarItem(myStatusBarItem, g_isLoading, false, "");
                 return { items: [] };
@@ -95,16 +91,9 @@ export default function inlineCompletionProvider(
             } else {
                 console.log("continue");
             }
-            console.log(prompts);
             if (true && !reGetCompletions) {
                 for (let prompt of prompts) {
-                    if (textBeforeCursor.trimEnd().indexOf(prompt) != -1) {
-                        try {
-                            let t = trie.getPrefix(textBeforeCursor.trimEnd());
-                            // console.log(t)
-                        } catch (err) {
-                            console.log(err);
-                        }
+                    if (textBeforeCursor.trimEnd().indexOf(prompt) != -1) {                        
                         let completions;
                         completions = trie.getPrefix(textBeforeCursor);
                         let useTrim = false;
@@ -117,7 +106,6 @@ export default function inlineCompletionProvider(
                         if (completions.length == 0) {
                             break;
                         }
-                        console.log("use Trie");
                         let items = new Array<MyInlineCompletionItem>();
                         let lastLine = document.lineAt(document.lineCount - 1);
                         for (
@@ -149,7 +137,6 @@ export default function inlineCompletionProvider(
                                 while (lines[nonNullIndex].trim() === "") {
                                     nonNullIndex++;
                                 }
-                                console.log(nonNullIndex);
                                 let newInsertText = "";
                                 for (
                                     let j = nonNullIndex;
@@ -161,7 +148,6 @@ export default function inlineCompletionProvider(
                                         newInsertText += "\n";
                                     }
                                 }
-                                console.log(newInsertText);
                                 if (
                                     textBeforeCursor[
                                         textBeforeCursor.length - 1
@@ -209,7 +195,7 @@ export default function inlineCompletionProvider(
                 console.log("try to get");
                 let requestId = new Date().getTime();
                 lastRequest = requestId;
-                await new Promise((f) => setTimeout(f, 500));
+                await new Promise((f) => setTimeout(f, delay));
                 if (lastRequest !== requestId) {
                     return { items: [] };
                 }
@@ -228,6 +214,7 @@ export default function inlineCompletionProvider(
                         lang = getDocumentLanguage(editor);
                     }
                     updateStatusBarItem(myStatusBarItem, g_isLoading, true, "");
+                    let timestart= new Date().getTime();
                     rs = await getCodeCompletions(
                         textBeforeCursor,
                         num,
@@ -236,6 +223,8 @@ export default function inlineCompletionProvider(
                         apiSecret,
                         "inlinecompletion"
                     );
+                    let timeend = new Date().getTime();
+                    console.log('time execute',timeend-timestart)
                 } catch (err) {
                     if (err) {
                         console.log("intended error");
@@ -263,8 +252,6 @@ export default function inlineCompletionProvider(
                 let items = new Array<MyInlineCompletionItem>();
                 let cursorPosition = editor.selection.active;
                 for (let i = 0; i < rs.completions.length; i++) {
-                    //rs.completions[i].replace('from\'','from \'')
-                    console.log("test", rs.completions[i]);
                     items.push({
                         insertText: rs.completions[i],
                         // range: new vscode.Range(endPosition.translate(0, rs.completions.length), endPosition),

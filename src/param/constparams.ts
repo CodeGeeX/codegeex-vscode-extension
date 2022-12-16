@@ -1,7 +1,10 @@
-import { tianqiApiKey, tianqiApiSecret,statsHerf } from "../localconfig";
+import { tianqiApiKey, tianqiApiSecret, statApiHerf, surveyUrlCN, surveyUrlEN } from "../localconfig";
+import * as vscode from 'vscode';
+import { localeCN } from "../locales/localeCN";
+import { localeEN } from "../locales/localeEN";
 
 export const extensionId = "aminer.codegeex";
-export const extensionVersion = "1.0.7";
+export const extensionVersion = "1.0.9";
 export const myScheme = "codegeex";
 
 //configure the key and Secret of tianqi
@@ -9,7 +12,7 @@ export const apiKey = tianqiApiKey;
 export const apiSecret = tianqiApiSecret;
 
 //api to do the statistics of data
-export const apiHerf = statsHerf;
+export const apiHerf = statApiHerf;
 
 //language accepted by the model
 export const languageList = [
@@ -39,3 +42,9 @@ export const comment = "<|comment|>";
 export const addSignal = "<|add|>";
 export const andSignal = "<|and|>";
 export const hash = "<|hash|>";
+
+//locale language
+export const locale = vscode.env.language;
+
+export const surveyUrl = locale === 'zh-cn'? surveyUrlCN:surveyUrlEN;
+export const localeTag = locale === 'zh-cn'? localeCN:localeEN;

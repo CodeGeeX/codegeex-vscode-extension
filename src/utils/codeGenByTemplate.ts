@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { getCodeCompletions } from "./getCodeCompletions";
 import getDocumentLanguage from "./getDocumentLanguage";
-import { apiKey, apiSecret } from "../param/constparams";
+import { apiKey, apiSecret, localeTag } from "../param/constparams";
 import { updateStatusBarItem } from "./updateStatusBarItem";
 
 export default async function codeGenByTemplate(
@@ -51,7 +51,7 @@ export default async function codeGenByTemplate(
                 }
             } else {
                 vscode.window.showInformationMessage(
-                    "There is an error in <INPUT> markup."
+                    localeTag.errorInInputMarkup
                 );
                 return;
             }

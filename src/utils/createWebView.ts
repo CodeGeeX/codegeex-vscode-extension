@@ -1,14 +1,20 @@
 import { ExtensionContext, ViewColumn, WebviewPanel, window } from "vscode";
 
-let panel: WebviewPanel | undefined;
+let panel: WebviewPanel | undefined = undefined;
 
 //To create web view in vscode
 export default async function createWebView(
     context: ExtensionContext,
     content?: string,
     view?: string
-): Promise<WebviewPanel> {
-    if (!panel) {
+) {
+    const columnToShowIn = window.activeTextEditor
+        ? window.activeTextEditor.viewColumn
+        : undefined;
+
+    if (panel) {
+        panel.reveal(columnToShowIn);
+    } else {
         panel = window.createWebviewPanel(
             "CodeGeeX.keys",
             "CodeGeeX Guide",
@@ -21,8 +27,7 @@ export default async function createWebView(
             }
         );
 
-        if (panel) {
-            panel.webview.html = `
+        panel.webview.html = `
 <!DOCTYPE html>
 <html lang="en" style="margin: 0; padding: 0; min-width: 100%; min-height: 100%">
     <head>
@@ -36,15 +41,12 @@ export default async function createWebView(
         </div>
     </body>
 </html>`;
-            panel.onDidDispose(
-                () => {
-                    panel = undefined;
-                },
-                null,
-                context.subscriptions
-            );
-        }
+        panel.onDidDispose(
+            () => {
+                panel = undefined;
+            },
+            null,
+            context.subscriptions
+        );
     }
-
-    return panel;
 }

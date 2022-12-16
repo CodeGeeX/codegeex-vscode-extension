@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { disabledFor, enableExtension } from "./param/configures";
+import { localeTag } from "./param/constparams";
 import changeIconColor from "./utils/changeIconColor";
 import { updateStatusBarItem } from "./utils/updateStatusBarItem";
 
@@ -9,18 +10,18 @@ export default async function disableEnable(
     g_isLoading: boolean,
     originalColor: string | vscode.ThemeColor | undefined
 ) {
+    const lang = vscode.window.activeTextEditor?.document.languageId || "";
     if (g_isEnable) {
-        const lang = vscode.window.activeTextEditor?.document.languageId || "";
         if (
             (disabledFor as any)[lang] ||
             (disabledFor as any)[lang] === "true"
         ) {
             const answer = await vscode.window.showInformationMessage(
-                "Would you like to disable CodeGeeX?",
-                "Disable Globally",
-                `Enable for ${lang}`
+                localeTag.disableInfo,
+                localeTag.disableGlobally,
+                `${localeTag.enable} ${lang}`
             );
-            if (answer === "Disable Globally") {
+            if (answer === localeTag.disableGlobally) {
                 // Run function
                 changeIconColor(false, myStatusBarItem, originalColor);
                 g_isEnable = false;
@@ -29,9 +30,8 @@ export default async function disableEnable(
                     undefined
                 );
                 configuration.update("EnableExtension", false);
-                console.log(configuration);
             }
-            if (answer === `Enable for ${lang}`) {
+            if (answer === `${localeTag.enable} ${lang}`) {
                 // Run function
                 const configuration = vscode.workspace.getConfiguration(
                     "Codegeex",
@@ -39,15 +39,16 @@ export default async function disableEnable(
                 );
                 (disabledFor as any)[lang] = false;
                 configuration.update("DisabledFor", disabledFor);
+                changeIconColor(true, myStatusBarItem, originalColor);
             }
         } else {
             const answer = await vscode.window.showInformationMessage(
-                "Would you like to disable CodeGeeX?",
-                "Disable Globally",
-                `Disable for ${lang}`
+                localeTag.disableInfo,
+                localeTag.disableGlobally,
+                `${localeTag.disable} ${lang}`
             );
 
-            if (answer === "Disable Globally") {
+            if (answer === localeTag.disableGlobally) {
                 // Run function
                 changeIconColor(false, myStatusBarItem, originalColor);
                 const configuration = vscode.workspace.getConfiguration(
@@ -57,7 +58,7 @@ export default async function disableEnable(
                 g_isEnable = false;
                 configuration.update("EnableExtension", false);
             }
-            if (answer === `Disable for ${lang}`) {
+            if (answer === `${localeTag.disable} ${lang}`) {
                 // Run function
                 const configuration = vscode.workspace.getConfiguration(
                     "Codegeex",
@@ -66,16 +67,27 @@ export default async function disableEnable(
                 (disabledFor as any)[lang] = true;
                 configuration.update("DisabledFor", disabledFor);
                 updateStatusBarItem(myStatusBarItem, g_isLoading, false, "");
+                changeIconColor(true, myStatusBarItem, originalColor,true);
+                
             }
         }
     } else {
         const answer = await vscode.window.showInformationMessage(
-            "Would you like to enable CodeGeeX?",
-            "Enable Globally"
+            localeTag.enableInfo,
+            localeTag.enableGlobally
         );
-        if (answer === "Enable Globally") {
+        if (answer === localeTag.enableGlobally) {
             // Run function
-            changeIconColor(true, myStatusBarItem, originalColor);
+            if (
+                (disabledFor as any)[lang] ||
+                (disabledFor as any)[lang] === "true"
+            ){
+                changeIconColor(true, myStatusBarItem, originalColor,true);
+                
+            }else{
+
+                changeIconColor(true, myStatusBarItem, originalColor);
+            }
             const configuration = vscode.workspace.getConfiguration(
                 "Codegeex",
                 undefined

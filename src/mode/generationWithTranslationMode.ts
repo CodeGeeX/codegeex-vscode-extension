@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
-import { hash, languageList } from "../param/constparams";
+import { hash, languageList, localeTag } from "../param/constparams";
 import { codegeexCodeTranslation } from "../utils/codegeexCodeTranslation";
+import { getCommentSignal } from "../utils/commentCode";
 import { getCodeTranslation } from "../utils/getCodeTranslation";
 import getDocumentLanguage from "../utils/getDocumentLanguage";
 import { showQuickPick } from "../utils/showQuickPick";
@@ -26,7 +27,7 @@ export default async function generationWithTranslationMode(
         let srcLang =
             (await showQuickPick(
                 languageList,
-                "Please choose the language to be translated."
+                localeTag.chooseLanguage
             )) || "";
         let translation;
         if (
@@ -39,7 +40,7 @@ export default async function generationWithTranslationMode(
                 true,
                 " Translating"
             );
-            let commandid: string;
+            let commandid:string;
             try{
 
                 commandid = await getStartData(
@@ -49,7 +50,7 @@ export default async function generationWithTranslationMode(
                     "translation"
                 );
             }catch(err){
-                commandid=''
+                commandid='';
             }
             translation = await getCodeTranslation(text, srcLang, dstLang).then(
                 async (res) => {
@@ -70,17 +71,17 @@ export default async function generationWithTranslationMode(
         }
         if (languageList.indexOf(srcLang) < 0) {
             vscode.window.showInformationMessage(
-                "Please choose the language to be translated."
+                localeTag.chooseLanguage
             );
         }
         if (languageList.indexOf(dstLang) < 0) {
             vscode.window.showInformationMessage(
-                "Sorry, the target language is not supported."
+                localeTag.languageNotSupported
             );
         }
     } else {
         vscode.window.showInformationMessage(
-            "Please select some code to be translated"
+            localeTag.selectCode
         );
     }
 }

@@ -1,9 +1,9 @@
 import { EventEmitter } from "stream";
-import { ExtensionContext, WebviewPanel } from "vscode";
+import { ExtensionContext, WebviewPanel,window } from "vscode";
 import createWebView from "./utils/createWebView";
 import { controls } from "./param/configures";
 
-let panel: WebviewPanel;
+let panel: WebviewPanel | undefined = undefined;
 export default async function welcomePage(
     context: ExtensionContext
 ): Promise<void> {
@@ -92,11 +92,9 @@ export default async function welcomePage(
         }
         switchTo(1);
         </script>
-    </div>`;
-    if (!panel) {
-        panel = await createWebView(context, content);
-    }
-    panel.reveal();
+    </div>`;    
+    await createWebView(context, content);
+    
 }
 
 const keys = `

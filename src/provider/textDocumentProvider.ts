@@ -10,6 +10,7 @@ import {
     apiSecret,
     comment,
     hash,
+    localeTag,
 } from "../param/constparams";
 import { getCommentSignal } from "../utils/commentCode";
 import getDocumentLanguage from "../utils/getDocumentLanguage";
@@ -21,7 +22,7 @@ export function textDocumentProvider(myStatusBarItem: vscode.StatusBarItem, g_is
         async provideTextDocumentContent(uri: vscode.Uri) {
             const params = new URLSearchParams(uri.query);
             if (params.get("loading") === "true") {
-                return `/* CodeGeeX is generating ... */\n`;
+                return `/* ${localeTag.generating} */\n`;
             }
             const mode = params.get("mode");
     
@@ -30,11 +31,10 @@ export function textDocumentProvider(myStatusBarItem: vscode.StatusBarItem, g_is
                 transResult = transResult
                     .replaceAll(addSignal, "+")
                     .replaceAll(andSignal, "&");
-                console.log("transResult", transResult);
                 const editor = vscode.window.activeTextEditor;
                 if (!editor) {
                     vscode.window.showInformationMessage(
-                        "Please open a file first to use CodeGeeX."
+                        localeTag.noEditorInfo
                     );
                     return;
                 }
@@ -61,7 +61,7 @@ export function textDocumentProvider(myStatusBarItem: vscode.StatusBarItem, g_is
                     const editor = vscode.window.activeTextEditor;
                     if (!editor) {
                         vscode.window.showInformationMessage(
-                            "Please open a file first to use CodeGeeX."
+                            localeTag.noEditorInfo
                         );
                         return;
                     }
@@ -104,11 +104,11 @@ export function textDocumentProvider(myStatusBarItem: vscode.StatusBarItem, g_is
                             g_isLoading
                         );
                     } else {
-                        return "No result to show";
+                        return localeTag.noResult;
                     }
                 } catch (err) {
                     console.log("Error sending request", err);
-                    return "There was an error sending the request\n" + err;
+                    return `${localeTag.sendingRequestErr}\n` + err;
                 }
             }
         }

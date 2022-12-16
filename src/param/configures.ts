@@ -1,7 +1,6 @@
 import { workspace } from "vscode";
 
 const configuration = workspace.getConfiguration("Codegeex", undefined);
-console.log(configuration);
 
 export const generationPreference = configuration.get("GenerationPreference");
 export const disabledFor = configuration.get("DisabledFor", new Object());
@@ -37,6 +36,8 @@ export const candidateNum = parseInt(candidateNum_str);
 export const needGuide = configuration.get("NeedGuide");
 export const translationInsertMode = configuration.get("Translation");
 export const enableExtension = configuration.get("EnableExtension", true);
+export const acceptedsurvey = configuration.get("Survey",null);
+export const completionDelay = configuration.get('CompletionDelay',0.5);
 export const controls = {
     interactiveMode: {
         mac: "Control + Enter",
