@@ -64,21 +64,9 @@ export default function getDocumentLanguage(editor: TextEditor) {
         case "sql":
             lang = "SQL";
             break;
-        // case 'html':
-        // 	lang = 'Kotlin'
-        // 	break
-        // case 'html':
-        // 	lang = 'Pascal'
-        // 	break
         case "r":
             lang = "R";
             break;
-        // case 'html':
-        // 	lang = 'Fortran'
-        // 	break
-        // case 'html':
-        // 	lang = 'Lean'
-        // 	break
         default:
             lang = "";
     }

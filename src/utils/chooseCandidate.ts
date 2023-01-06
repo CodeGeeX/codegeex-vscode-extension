@@ -38,11 +38,12 @@ export default function chooseCandidate(
                 } else {
                     editBuilder.replace(s, fn);
                 }
-                try{
-
-                    await getEndData(commandid, "", "Yes", fn);
-                }catch(err){
-                    console.log(err)
+                try {
+                    if (commandid.length !== 0) {
+                        await getEndData(commandid, "", "Yes", fn);
+                    }
+                } catch (err) {
+                    console.log(err);
                 }
             })
             .then((success) => {

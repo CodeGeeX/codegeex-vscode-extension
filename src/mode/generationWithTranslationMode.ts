@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import { hash, languageList, localeTag } from "../param/constparams";
 import { codegeexCodeTranslation } from "../utils/codegeexCodeTranslation";
-import { getCommentSignal } from "../utils/commentCode";
 import { getCodeTranslation } from "../utils/getCodeTranslation";
 import getDocumentLanguage from "../utils/getDocumentLanguage";
 import { showQuickPick } from "../utils/showQuickPick";
@@ -25,10 +24,7 @@ export default async function generationWithTranslationMode(
     let text = document.getText(selection);
     if (text && text.trim().length > 0) {
         let srcLang =
-            (await showQuickPick(
-                languageList,
-                localeTag.chooseLanguage
-            )) || "";
+            (await showQuickPick(languageList, localeTag.chooseLanguage)) || "";
         let translation;
         if (
             languageList.indexOf(srcLang) >= 0 &&
@@ -40,17 +36,16 @@ export default async function generationWithTranslationMode(
                 true,
                 " Translating"
             );
-            let commandid:string;
-            try{
-
+            let commandid: string;
+            try {
                 commandid = await getStartData(
                     text,
                     text,
                     `${srcLang}->${dstLang}`,
                     "translation"
                 );
-            }catch(err){
-                commandid='';
+            } catch (err) {
+                commandid = "";
             }
             translation = await getCodeTranslation(text, srcLang, dstLang).then(
                 async (res) => {
@@ -70,9 +65,7 @@ export default async function generationWithTranslationMode(
             );
         }
         if (languageList.indexOf(srcLang) < 0) {
-            vscode.window.showInformationMessage(
-                localeTag.chooseLanguage
-            );
+            vscode.window.showInformationMessage(localeTag.chooseLanguage);
         }
         if (languageList.indexOf(dstLang) < 0) {
             vscode.window.showInformationMessage(
@@ -80,8 +73,6 @@ export default async function generationWithTranslationMode(
             );
         }
     } else {
-        vscode.window.showInformationMessage(
-            localeTag.selectCode
-        );
+        vscode.window.showInformationMessage(localeTag.selectCode);
     }
 }

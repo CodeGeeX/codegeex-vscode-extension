@@ -1,0 +1,36 @@
+textarea {
+    width: 95%;
+    height: 100px;
+    min-width: 250px;
+    margin-left: auto;
+    margin-right: auto;
+    height: auto;
+    font-size: small;
+    word-wrap: break-word;
+    word-break: break-all;
+    border: 1px solid #B0ACAC;
+    background-color: #333333;
+    color: #f2f2f2;
+  
+  }
+  button {
+    background-color: transparent;
+    padding-bottom: 0;
+    font-size: 10px;
+    text-align: right;
+    color: #d9d9d9;
+    border:transparent;
+  }
+  img{
+    height: 10px;
+  }
+  table{
+    width: 95%;
+    margin-bottom: 10px;
+    min-width:250px;
+    text-align: right;
+  }
+  span{
+    font-size: 10px;
+    font-weight: 300;
+  }

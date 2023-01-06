@@ -1,8 +1,9 @@
 import * as vscode from "vscode";
 import { getCodeCompletions } from "./getCodeCompletions";
 import getDocumentLanguage from "./getDocumentLanguage";
-import { apiKey, apiSecret, localeTag } from "../param/constparams";
+import { localeTag } from "../param/constparams";
 import { updateStatusBarItem } from "./updateStatusBarItem";
+import { apiKey, apiSecret } from "../localconfig";
 
 export default async function codeGenByTemplate(
     editor: vscode.TextEditor,

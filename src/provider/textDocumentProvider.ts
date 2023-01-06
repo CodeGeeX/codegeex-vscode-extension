@@ -6,8 +6,6 @@ import { candidateNum } from "../param/configures";
 import {
     addSignal,
     andSignal,
-    apiKey,
-    apiSecret,
     comment,
     hash,
     localeTag,
@@ -16,8 +14,12 @@ import { getCommentSignal } from "../utils/commentCode";
 import getDocumentLanguage from "../utils/getDocumentLanguage";
 import { getGPTCode } from "../utils/getGPTCode";
 import { getCodeCompletions } from "../utils/getCodeCompletions";
+import { apiKey, apiSecret } from "../localconfig";
 
-export function textDocumentProvider(myStatusBarItem: vscode.StatusBarItem, g_isLoading: boolean) {
+export function textDocumentProvider(
+    myStatusBarItem: vscode.StatusBarItem,
+    g_isLoading: boolean
+) {
     const textDocumentProvider = new (class {
         async provideTextDocumentContent(uri: vscode.Uri) {
             const params = new URLSearchParams(uri.query);
@@ -25,7 +27,7 @@ export function textDocumentProvider(myStatusBarItem: vscode.StatusBarItem, g_is
                 return `/* ${localeTag.generating} */\n`;
             }
             const mode = params.get("mode");
-    
+
             if (mode === "translation") {
                 let transResult = params.get("translation_res") || "";
                 transResult = transResult
@@ -40,15 +42,22 @@ export function textDocumentProvider(myStatusBarItem: vscode.StatusBarItem, g_is
                 }
                 codelensProvider.clearEls();
                 let commandid = params.get("commandid") || "";
-                let commentSignal = getCommentSignal(editor.document.languageId);
+                let commentSignal = getCommentSignal(
+                    editor.document.languageId
+                );
                 transResult = transResult
                     .replaceAll(hash, "#")
                     .replaceAll(comment, commentSignal.line || "#");
-                codelensProvider.addEl(0, transResult, commandid, "translation");
+                codelensProvider.addEl(
+                    0,
+                    transResult,
+                    commandid,
+                    "translation"
+                );
                 return transResult;
             } else {
                 let code_block = params.get("code_block") ?? "";
-    
+
                 try {
                     code_block = code_block
                         .replaceAll(hash, "#")
@@ -113,5 +122,5 @@ export function textDocumentProvider(myStatusBarItem: vscode.StatusBarItem, g_is
             }
         }
     })();
-    return textDocumentProvider;    
+    return textDocumentProvider;
 }

@@ -1,30 +1,19 @@
 import * as vscode from "vscode";
 import { apiKey, apiSecret } from "../localconfig";
-import {
-    candidateNum,
-    completionDelay,
-    disabledFor,
-} from "../param/configures";
-import { Trie } from "../trie";
+import { disabledFor } from "../param/configures";
 import { getCodeCompletions } from "../utils/getCodeCompletions";
 import getDocumentLanguage from "../utils/getDocumentLanguage";
 import { updateStatusBarItem } from "../utils/updateStatusBarItem";
 
 let lastRequest = null;
-let trie = new Trie([]);
-let prompts: string[] = [];
 let someTrackingIdCounter = 0;
-let delay: number = completionDelay * 1000;
-// let timeExecute: number = 2500;
-// let last5ExecuteTime  = [2500,2500,2500,2500,2500];
 
 interface MyInlineCompletionItem extends vscode.InlineCompletionItem {
     trackingId: number;
 }
-export default function inlineCompletionProvider(
+export default function inlineCompletionProviderWithCommand(
     g_isLoading: boolean,
     myStatusBarItem: vscode.StatusBarItem,
-    reGetCompletions: boolean,
     originalColor: string | vscode.ThemeColor | undefined,
     extensionContext: vscode.ExtensionContext
 ) {
@@ -39,20 +28,29 @@ export default function inlineCompletionProvider(
             const enableExtension = await extensionContext.globalState.get(
                 "EnableExtension"
             );
-            const disableInlineCompletion =
-                await extensionContext.globalState.get(
-                    "DisableInlineCompletion"
-                );
+            const isOneCommand = await extensionContext.globalState.get(
+                "isOneCommand"
+            );
             //= vscode.workspace
             // .getConfiguration("Codegeex", undefined)
-            // .get("EnableExtension", undefined);
-            if (!enableExtension || disableInlineCompletion) {
+            // .get("isOneCommand", undefined);
+            if (!isOneCommand || !enableExtension) {
+                extensionContext.globalState.update("isOneCommand", false);
+                extensionContext.globalState.update(
+                    "DisableInlineCompletion",
+                    false
+                );
                 return;
             }
             const editor = vscode.window.activeTextEditor;
             if (!editor) {
                 vscode.window.showInformationMessage(
                     "Please open a file first to use CodeGeeX."
+                );
+                extensionContext.globalState.update("isOneCommand", false);
+                extensionContext.globalState.update(
+                    "DisableInlineCompletion",
+                    false
                 );
                 return;
             }
@@ -61,8 +59,13 @@ export default function inlineCompletionProvider(
             if (
                 (disabledFor as any)[languageId] === true ||
                 (disabledFor as any)[languageId] === "true" ||
-                !enableExtension
+                !isOneCommand
             ) {
+                extensionContext.globalState.update("isOneCommand", false);
+                extensionContext.globalState.update(
+                    "DisableInlineCompletion",
+                    false
+                );
                 return;
             }
             const cursorPosition = editor.selection.active;
@@ -86,6 +89,11 @@ export default function inlineCompletionProvider(
             }
             if (textBeforeCursor.trim() === "") {
                 updateStatusBarItem(myStatusBarItem, g_isLoading, false, "");
+                extensionContext.globalState.update("isOneCommand", false);
+                extensionContext.globalState.update(
+                    "DisableInlineCompletion",
+                    false
+                );
                 return { items: [] };
             }
 
@@ -103,116 +111,25 @@ export default function inlineCompletionProvider(
             if (!checkString.includes(nextChar)) {
                 console.log("不进行补充");
                 updateStatusBarItem(myStatusBarItem, g_isLoading, false, "");
+                extensionContext.globalState.update("isOneCommand", false);
+                extensionContext.globalState.update(
+                    "DisableInlineCompletion",
+                    false
+                );
                 return;
             } else {
                 console.log("continue");
             }
-            if (true && !reGetCompletions) {
-                for (let prompt of prompts) {
-                    if (textBeforeCursor.trimEnd().indexOf(prompt) != -1) {
-                        let completions;
-                        completions = trie.getPrefix(textBeforeCursor);
-                        let useTrim = false;
-                        if (completions.length === 0) {
-                            completions = trie.getPrefix(
-                                textBeforeCursor.trimEnd()
-                            );
-                            useTrim = true;
-                        }
-                        if (completions.length == 0) {
-                            break;
-                        }
-                        let items = new Array<MyInlineCompletionItem>();
-                        let lastLine = document.lineAt(document.lineCount - 1);
-                        for (
-                            let i = 0;
-                            i <
-                            Math.min(
-                                Math.min(completions.length, candidateNum) + 1,
-                                completions.length
-                            );
-                            i++
-                        ) {
-                            let insertText = useTrim
-                                ? completions[i].replace(
-                                      textBeforeCursor.trimEnd(),
-                                      ""
-                                  )
-                                : completions[i].replace(textBeforeCursor, "");
-                            console.log(insertText);
-                            let needRequest = ["", "\n", "\n\n"];
-                            if (
-                                needRequest.includes(insertText) ||
-                                insertText.trim() === ""
-                            ) {
-                                continue;
-                            }
-                            if (useTrim) {
-                                const lines = insertText.split("\n");
-                                let nonNullIndex = 0;
-                                while (lines[nonNullIndex].trim() === "") {
-                                    nonNullIndex++;
-                                }
-                                let newInsertText = "";
-                                for (
-                                    let j = nonNullIndex;
-                                    j < lines.length;
-                                    j++
-                                ) {
-                                    newInsertText += lines[j];
-                                    if (j !== lines.length - 1) {
-                                        newInsertText += "\n";
-                                    }
-                                }
-                                if (
-                                    textBeforeCursor[
-                                        textBeforeCursor.length - 1
-                                    ] === "\n" ||
-                                    nonNullIndex === 0
-                                ) {
-                                    insertText = newInsertText;
-                                } else {
-                                    insertText = "\n" + newInsertText;
-                                }
-                            }
-
-                            items.push({
-                                insertText,
-                                range: new vscode.Range(
-                                    position.translate(0, completions.length),
-                                    position
-                                ),
-                                // range: new vscode.Range(endPosition.translate(0, completions.length), endPosition),
-                                trackingId: someTrackingIdCounter++,
-                            });
-                            if (useTrim) {
-                                trie.addWord(
-                                    textBeforeCursor.trimEnd() + insertText
-                                );
-                            } else {
-                                trie.addWord(textBeforeCursor + insertText);
-                            }
-                        }
-                        if (items.length === 0) {
-                            continue;
-                        } else {
-                            updateStatusBarItem(
-                                myStatusBarItem,
-                                g_isLoading,
-                                false,
-                                " Done"
-                            );
-                            return items;
-                        }
-                    }
-                }
-            }
-            if (enableExtension && textBeforeCursor.length > 8) {
+            if (isOneCommand && textBeforeCursor.length > 8) {
                 console.log("try to get");
                 let requestId = new Date().getTime();
                 lastRequest = requestId;
-                await new Promise((f) => setTimeout(f, delay));
                 if (lastRequest !== requestId) {
+                    extensionContext.globalState.update("isOneCommand", false);
+                    extensionContext.globalState.update(
+                        "DisableInlineCompletion",
+                        false
+                    );
                     return { items: [] };
                 }
                 console.log("real to get");
@@ -252,6 +169,11 @@ export default function inlineCompletionProvider(
                         false,
                         " No Suggestion"
                     );
+                    extensionContext.globalState.update("isOneCommand", false);
+                    extensionContext.globalState.update(
+                        "DisableInlineCompletion",
+                        false
+                    );
                     return { items: [] };
                 }
                 if (rs === null) {
@@ -261,9 +183,14 @@ export default function inlineCompletionProvider(
                         false,
                         " No Suggestion"
                     );
+                    extensionContext.globalState.update("isOneCommand", false);
+                    extensionContext.globalState.update(
+                        "DisableInlineCompletion",
+                        false
+                    );
                     return { items: [] };
                 }
-                prompts.push(textBeforeCursor);
+                // prompts.push(textBeforeCursor);
                 // Add the generated code to the inline suggestion list
                 let items = new Array<MyInlineCompletionItem>();
                 let cursorPosition = editor.selection.active;
@@ -277,7 +204,7 @@ export default function inlineCompletionProvider(
                         ),
                         trackingId: someTrackingIdCounter++,
                     });
-                    trie.addWord(textBeforeCursor + rs.completions[i]);
+                    //trie.addWord(textBeforeCursor + rs.completions[i]);
                 }
                 for (let j = 0; j < items.length; j++) {
                     items[j].command = {
@@ -305,6 +232,11 @@ export default function inlineCompletionProvider(
                         " Done"
                     );
                 }
+                extensionContext.globalState.update("isOneCommand", false);
+                extensionContext.globalState.update(
+                    "DisableInlineCompletion",
+                    false
+                );
                 return items;
             }
             updateStatusBarItem(
@@ -312,6 +244,11 @@ export default function inlineCompletionProvider(
                 g_isLoading,
                 false,
                 " No Suggestion"
+            );
+            extensionContext.globalState.update("isOneCommand", false);
+            extensionContext.globalState.update(
+                "DisableInlineCompletion",
+                false
             );
             return { items: [] };
         },

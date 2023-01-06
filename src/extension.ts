@@ -2,7 +2,11 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 import * as vscode from "vscode";
 import { localeTag, myScheme } from "./param/constparams";
 import { checkPrivacy } from "./utils/checkPrivacy";
-import { getEndData, getOpenExtensionData, getTotalRequestNum } from "./utils/statisticFunc";
+import {
+    getEndData,
+    getOpenExtensionData,
+    getTotalRequestNum,
+} from "./utils/statisticFunc";
 import { updateStatusBarItem } from "./utils/updateStatusBarItem";
 import { generateWithPromptMode } from "./mode/generationWithPrompMode";
 import welcomePage from "./welcomePage";
@@ -13,10 +17,12 @@ import chooseCandidate from "./utils/chooseCandidate";
 import disableEnable from "./disableEnable";
 import { textDocumentProvider } from "./provider/textDocumentProvider";
 import inlineCompletionProvider from "./provider/inlineCompletionProvider";
-import { enableExtension } from "./param/configures";
+import { enableExtension, onlyKeyControl } from "./param/configures";
 import changeIconColor from "./utils/changeIconColor";
 import { isCurrentLanguageDisable } from "./utils/isCurrentLanguageDisable";
 import survey from "./utils/survey";
+import translationWebviewProvider from "./provider/translationWebviewProvider";
+import inlineCompletionProviderWithCommand from "./provider/inlineCompletionProviderWithCommand";
 
 let g_isLoading = false;
 let originalColor: string | vscode.ThemeColor | undefined;
@@ -24,10 +30,9 @@ let myStatusBarItem: vscode.StatusBarItem;
 
 export async function activate(context: vscode.ExtensionContext) {
     console.log('Congratulations, your extension "CodeGeeX" is now active!');
-    try{
-
-        await getOpenExtensionData();
-    }catch(err){
+    try {
+        getOpenExtensionData();
+    } catch (err) {
         console.error(err);
     }
     context.subscriptions.push(
@@ -45,9 +50,14 @@ export async function activate(context: vscode.ExtensionContext) {
     const statusBarItemCommandId = "codegeex.disable-enable";
     context.subscriptions.push(
         vscode.commands.registerCommand("codegeex.disable-enable", () => {
-            disableEnable(myStatusBarItem, g_isLoading, originalColor);
+            disableEnable(myStatusBarItem, g_isLoading, originalColor, context);
         })
     );
+    if (enableExtension) {
+        context.globalState.update("EnableExtension", true);
+    } else {
+        context.globalState.update("EnableExtension", false);
+    }
     // create a new status bar item that we can now manage
     myStatusBarItem = vscode.window.createStatusBarItem(
         vscode.StatusBarAlignment.Right,
@@ -56,7 +66,12 @@ export async function activate(context: vscode.ExtensionContext) {
     myStatusBarItem.command = statusBarItemCommandId;
     context.subscriptions.push(myStatusBarItem);
     //initialiser statusbar
-    changeIconColor(enableExtension, myStatusBarItem, originalColor,isCurrentLanguageDisable());
+    changeIconColor(
+        enableExtension,
+        myStatusBarItem,
+        originalColor,
+        isCurrentLanguageDisable()
+    );
     updateStatusBarItem(myStatusBarItem, g_isLoading, false, "");
     //subscribe interactive-mode command
     context.subscriptions.push(
@@ -84,9 +99,7 @@ export async function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand("codegeex.translate-mode", async () => {
             const editor = vscode.window.activeTextEditor;
             if (!editor) {
-                vscode.window.showInformationMessage(
-                    localeTag.noEditorInfo
-                );
+                vscode.window.showInformationMessage(localeTag.noEditorInfo);
                 return;
             }
             targetEditor = editor;
@@ -101,9 +114,7 @@ export async function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand("codegeex.prompt-mode", () => {
             const editor = vscode.window.activeTextEditor;
             if (!editor) {
-                vscode.window.showInformationMessage(
-                    localeTag.noEditorInfo
-                );
+                vscode.window.showInformationMessage(localeTag.noEditorInfo);
                 return;
             }
             generateWithPromptMode(myStatusBarItem, g_isLoading, editor);
@@ -112,7 +123,7 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.workspace.registerTextDocumentContentProvider(
             myScheme,
-            textDocumentProvider(myStatusBarItem,g_isLoading)
+            textDocumentProvider(myStatusBarItem, g_isLoading)
         )
     );
     context.subscriptions.push(
@@ -131,42 +142,87 @@ export async function activate(context: vscode.ExtensionContext) {
         )
     );
 
-    
     //command after insert a suggestion in stealth mode
     context.subscriptions.push(
         vscode.commands.registerCommand(
             "verifyInsertion",
             async (id, completions, acceptItem) => {
-                try{
-
-                    await getEndData(id, "", "Yes", acceptItem, completions);
-                }catch(err){
-                    console.log(err)
+                try {
+                    getEndData(id, "", "Yes", acceptItem, completions);
+                } catch (err) {
+                    console.log(err);
                 }
             }
         )
     );
-    context.subscriptions.push(
-        vscode.languages.registerInlineCompletionItemProvider(
-            { pattern: "**" },
-            inlineCompletionProvider(g_isLoading, myStatusBarItem, false,originalColor)
-        )
+
+    let inlineProvider: vscode.InlineCompletionItemProvider;
+
+    inlineProvider = inlineCompletionProvider(
+        g_isLoading,
+        myStatusBarItem,
+        false,
+        originalColor,
+        context
     );
-    context.subscriptions.push(
-        vscode.commands.registerCommand("codegeex.new-completions", () => {
+
+    if (onlyKeyControl) {
+        context.globalState.update("DisableInlineCompletion", true);
+    } else {
+        context.subscriptions.push(
+            //vscode.commands.registerCommand('codegeex.inline-completions',()=>
             vscode.languages.registerInlineCompletionItemProvider(
                 { pattern: "**" },
-                inlineCompletionProvider(g_isLoading, myStatusBarItem, true,originalColor)
+                inlineProvider
+            )
+            //)
+        );
+    }
+
+    let provider2 = inlineCompletionProviderWithCommand(
+        g_isLoading,
+        myStatusBarItem,
+        originalColor,
+        context
+    );
+    let oneTimeDispo: vscode.Disposable;
+    vscode.commands.registerCommand("codegeex.new-completions", () => {
+        if (oneTimeDispo) {
+            oneTimeDispo.dispose();
+        }
+        context.globalState.update("isOneCommand", true);
+        context.globalState.update("DisableInlineCompletion", true);
+        oneTimeDispo = vscode.languages.registerInlineCompletionItemProvider(
+            { pattern: "**" },
+            provider2
+        );
+    });
+    context.subscriptions.push(
+        vscode.window.onDidChangeActiveTextEditor(async (e) => {
+            const editor = vscode.window.activeTextEditor;
+            const enableExtension = await context.globalState.get(
+                "EnableExtension"
             );
+            if (editor) {
+                changeIconColor(
+                    //@ts-ignore
+                    enableExtension,
+                    myStatusBarItem,
+                    originalColor,
+                    isCurrentLanguageDisable(),
+                    true
+                );
+            }
         })
     );
-    context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(e=>{
-        const editor = vscode.window.activeTextEditor;
-        if(editor){
-            changeIconColor(true,myStatusBarItem,originalColor,isCurrentLanguageDisable(),true)
-            
-        }
-    }))
-    
+    const tranlationProvider = new translationWebviewProvider(
+        context.extensionUri
+    );
+    const translationViewDisposable = vscode.window.registerWebviewViewProvider(
+        "codegeex-translate",
+        tranlationProvider
+    );
+
+    context.subscriptions.push(translationViewDisposable);
 }
 export function deactivate() {}

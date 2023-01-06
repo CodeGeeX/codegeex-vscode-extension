@@ -1,0 +1,40 @@
+
+#original,#summary {
+  width: 95%;
+  height: 400px;
+  min-width: 250px;
+  margin-left: auto;
+  margin-right: auto;
+  height: auto;
+  font-size: small;
+  border: 1px solid #B0ACAC;
+  background-color: #333333;
+  color: #f2f2f2;
+  overflow-x: scroll;
+  white-space: nowrap;
+  
+
+}
+
+#translate-button {
+  margin: 5px;
+}
+
+#copy-button, #insert-button {
+  width: 43px;
+  background-color: transparent;
+  padding-bottom: 0;
+  font-size: 10px;
+  color: #d9d9d9;
+}
+.title{
+  width: 90%;
+  font-size: 15px;
+}
+
+table{
+  width: 95%;
+  margin-top: 10px;
+  min-width:250px;
+  text-align: left;
+}

@@ -8,7 +8,8 @@ let g_isEnable = enableExtension;
 export default async function disableEnable(
     myStatusBarItem: vscode.StatusBarItem,
     g_isLoading: boolean,
-    originalColor: string | vscode.ThemeColor | undefined
+    originalColor: string | vscode.ThemeColor | undefined,
+    context: vscode.ExtensionContext
 ) {
     const lang = vscode.window.activeTextEditor?.document.languageId || "";
     if (g_isEnable) {
@@ -30,6 +31,7 @@ export default async function disableEnable(
                     undefined
                 );
                 configuration.update("EnableExtension", false);
+                await context.globalState.update("EnableExtension", false);
             }
             if (answer === `${localeTag.enable} ${lang}`) {
                 // Run function
@@ -57,6 +59,7 @@ export default async function disableEnable(
                 );
                 g_isEnable = false;
                 configuration.update("EnableExtension", false);
+                await context.globalState.update("EnableExtension", false);
             }
             if (answer === `${localeTag.disable} ${lang}`) {
                 // Run function
@@ -67,8 +70,7 @@ export default async function disableEnable(
                 (disabledFor as any)[lang] = true;
                 configuration.update("DisabledFor", disabledFor);
                 updateStatusBarItem(myStatusBarItem, g_isLoading, false, "");
-                changeIconColor(true, myStatusBarItem, originalColor,true);
-                
+                changeIconColor(true, myStatusBarItem, originalColor, true);
             }
         }
     } else {
@@ -81,11 +83,9 @@ export default async function disableEnable(
             if (
                 (disabledFor as any)[lang] ||
                 (disabledFor as any)[lang] === "true"
-            ){
-                changeIconColor(true, myStatusBarItem, originalColor,true);
-                
-            }else{
-
+            ) {
+                changeIconColor(true, myStatusBarItem, originalColor, true);
+            } else {
                 changeIconColor(true, myStatusBarItem, originalColor);
             }
             const configuration = vscode.workspace.getConfiguration(
@@ -94,6 +94,7 @@ export default async function disableEnable(
             );
             g_isEnable = true;
             configuration.update("EnableExtension", true);
+            await context.globalState.update("EnableExtension", true);
         }
     }
 }

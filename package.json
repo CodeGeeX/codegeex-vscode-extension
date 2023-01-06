@@ -1,217 +1,244 @@
 {
-	"publisher": "AMiner",
-	"name": "codegeex",
-	"displayName": "CodeGeeX",
-	"description": "We introduce CodeGeeX, a large-scale multilingual code generative model with 13 billion parameters, pretrained on a large code corpus of more than 20 programming languages.",
-	"homepage": "https://models.aminer.cn/codegeex",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/THUDM/CodeGeeX"
-	},
-	"icon": "codegeex_logo.png",
-	"version": "1.0.9",
-	"engines": {
-		"vscode": "^1.68.0"
-	},
-	"categories": [
-		"Programming Languages",
-		"Snippets",
-		"Machine Learning",
-		"Other"
-	],
-	"activationEvents": [
-		"*"
-	],
-	"main": "./out/extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "codegeex.interactive-mode",
-				"title": "CodeGeeX: Interactive mode"
-			},
-			{
-				"command": "codegeex.disable-enable",
-				"title": "Disable or enable CodeGeeX"
-			},
-			{
-				"command": "codegeex.prompt-mode",
-				"title": "CodeGeeX: Prompt mode(Experimental)",
-				"description": "Generate code with prompts by choosing a template"
-			},
-			{
-				"command": "codegeex.translate-mode",
-				"title": "CodeGeeX: Translation mode"
-			}
-		],
-		"configuration": [
-			{
-				"title": "CodeGeeX",
-				"properties": {
-					"Codegeex.CandidateNum": {
-						"type": "string",
-						"enum": [
-							"1 (fast)",
-							"3 (medium)",
-							"5 (slow)"
-						],
-						"default": "1 (fast)",
-						"description": "The candidate list of code. The more the slower the inference."
-					},
-					"Codegeex.PromptTemplates(Experimental)": {
-						"type": "object",
-						"description": "Prompts for code generation. There is a few prompts provided by default. Add a mapping here to use your own. For example: {\"myCustomPrompt\": \"/Users/foobar/Downloads/prompt.txt\"}",
-						"additionalProperties": "string",
-						"default": {
-							"explanation": ""
-						}
-					},
-					"Codegeex.Privacy": {
-						"type": "boolean",
-						"description": "Accept sharing the generated code only for research purposes to make CodeGeeX better. Otherwise, the code won't be stored and is only used to assist your programming.",
-						"default": null
-					},
-					"Codegeex.Translation": {
-						"type": "string",
-						"enum": [
-							"replace",
-							"comment"
-						],
-						"default": "comment",
-						"description": "When inserting code translated, you want to ___ original code"
-					},
-					"Codegeex.DecodingStrategies.temp": {
-						"type": "number",
-						"default": 0.8,
-						"maximum": 1,
-						"minimum": 0.01,
-						"description": "Temp controls the randomness of output, range: [0.01, 1]. Higher temperature means more randomness, and the model will return creative results. "
-					},
-					"Codegeex.DecodingStrategies.topp": {
-						"type": "number",
-						"default": 0.95,
-						"maximum": 1,
-						"minimum": 0,
-						"description": "Top-p keeps the candidate tokens whose probabilities sum to p, range [0, 1]. Top-p=0 means disabled."
-					},
-					"Codegeex.DecodingStrategies.topk": {
-						"type": "number",
-						"default": 0,
-						"maximum": 40,
-						"minimum": 0,
-						"description": "Top-k keeps the k candidate tokens with the highest probabilities, range [0, 40]. Top-k=0 means disabled."
-					},
-					"Codegeex.DisabledFor": {
-						"type": "object",
-						"additionalProperties": "string",
-						"default": {
-						},
-						"description": "DisabledFor is a list of specific languages that will be disabled temporarily for the extension, you can set manully language* as the key and then set the value true to disable a language or false to re-enable it in workspace settings (this will need to restart vscode) or do this by clicking icon in the status bar.\n*language should be a valid vscode language id, like python, shellscript, csharp, objective-cpp and etc. You can click the language option in status bar to find the list and language ids are in the parentheses."
-					},
-					"Codegeex.GenerationPreference":{
-						"type":"string",
-						"enum": [
-							"automatic",
-							"line by line"
-						],
-						"description": "You can choose the preference when generating code. If you choose automatic, the extension will generate whether a block or a line depending on your input. If you choose line by line, the extension will generate a code line, a comment line or a code line and a comment line for you each time.",
-						"default":"automatic"
-					},
-					"Codegeex.EnableExtension":{
-						"type":"boolean",
-						"default":true,
-						"description": "This will decide if you enable the stealth mode of the extension."
-					},
-					"Codegeex.Survey":{
-						"type":"boolean",
-						"default":null,
-						"markdownDescription": "This is decided by if you have chosen to make a survey. If you want to make the survey again, you can click the link:<br>[EN]:https://wj.qq.com/s2/11260705/6cd6/<br>[CN]:https://wj.qq.com/s2/11259178/fd49/"
-					},
-					"Codegeex.CompletionDelay":{
-						"type":"number",
-						"minimum": 0.5,
-						"default":0.5,
-						"description": "The delay in seconds to start getting completions without new change in the editor. You can change this value to get better experience in coding with our extension and to avoid some unuseful completion suggestions."
-
-					}
-				}
-			}
-		],
-		"keybindings": [
-			{
-				"command": "codegeex.interactive-mode",
-				"key": "ctrl+enter",
-				"mac": "ctrl+enter",
-				"when":"editorFocus && !editorReadonly"
-			},
-			{
-				"command": "codegeex.prompt-mode",
-				"key": "Alt+T",
-				"when":"editorFocus && !editorReadonly"
-			},
-			{
-				"command": "codegeex.new-completions",
-				"key": "Alt+N",
-				"when":"editorFocus && !editorReadonly"
-			},
-			{
-				"command": "codegeex.translate-mode",
-				"key": "Alt+ctrl+T",
-				"when":"editorFocus && !editorReadonly"
-			},
-			{
-				"command": "codegeex.welcome-page",
-				"key": "Alt+ctrl+W"
-			}
-		],
-		"menus": {
-			"editor/context": [
-				{
-					"command": "codegeex.translate-mode",
-					"group": "group1@1"
-				},
-				{
-					"command": "codegeex.interactive-mode",
-					"group": "group1@2"
-				},
-				{
-					"command": "codegeex.prompt-mode",
-					"group": "group1@3"
-				}
-			]
-		},
-		"icons": {
-			"codegeex-dark": {
-				"description": "CodeGeeX icon",
-				"default": {
-					"fontPath": "./codegeex.woff",
-					"fontCharacter": "\\E001"
-				}
-			}
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile && npm run lint",
-		"lint": "eslint src --ext ts",
-		"test": "node ./out/test/runTest.js"
-	},
-	"devDependencies": {
-		"@types/glob": "^7.2.0",
-		"@types/mocha": "^9.1.1",
-		"@types/node": "16.x",
-		"@types/vscode": "^1.68.0",
-		"@typescript-eslint/eslint-plugin": "^5.31.0",
-		"@typescript-eslint/parser": "^5.31.0",
-		"@vscode/test-electron": "^2.1.5",
-		"eslint": "^8.20.0",
-		"glob": "^8.0.3",
-		"mocha": "^10.0.0",
-		"typescript": "^4.7.4"
-	},
-	"dependencies": {
-		"axios": "^0.24.0",
-		"vsce": "^1.100.2"
-	}
+    "publisher": "AMiner",
+    "name": "codegeex",
+    "displayName": "CodeGeeX",
+    "description": "We introduce CodeGeeX, a large-scale multilingual code generative model with 13 billion parameters, pretrained on a large code corpus of more than 20 programming languages.",
+    "homepage": "https://models.aminer.cn/codegeex",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/THUDM/CodeGeeX"
+    },
+    "icon": "codegeex_logo.png",
+    "version": "1.1.0",
+    "engines": {
+        "vscode": "^1.68.0"
+    },
+    "categories": [
+        "Programming Languages",
+        "Snippets",
+        "Machine Learning",
+        "Other"
+    ],
+    "activationEvents": [
+        "*"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "codegeex.interactive-mode",
+                "title": "CodeGeeX: Interactive mode"
+            },
+            {
+                "command": "codegeex.disable-enable",
+                "title": "Disable or enable CodeGeeX"
+            },
+            {
+                "command": "codegeex.prompt-mode",
+                "title": "CodeGeeX: Prompt mode(Experimental)",
+                "description": "Generate code with prompts by choosing a template"
+            },
+            {
+                "command": "codegeex.translate-mode",
+                "title": "CodeGeeX: Translation mode"
+            }
+        ],
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "codegeex-sidebar",
+                    "title": "Codegeex SideBar",
+                    "icon": "logo-codegeex.png"
+                }
+            ]
+        },
+        "views": {
+            "codegeex-sidebar": [
+                {
+                    "type": "webview",
+                    "id": "codegeex-translate",
+                    "name": "Translation"
+                }
+            ]
+        },
+        "configuration": [
+            {
+                "title": "CodeGeeX",
+                "properties": {
+                    "Codegeex.CandidateNum": {
+                        "type": "string",
+                        "enum": [
+                            "1 (fast)",
+                            "3 (medium)",
+                            "5 (slow)"
+                        ],
+                        "default": "1 (fast)",
+                        "description": "The candidate list of code. The more the slower the inference."
+                    },
+                    "Codegeex.CompletionDelay": {
+                        "type": "number",
+                        "minimum": 0.5,
+                        "default": 0.5,
+                        "description": "The delay in seconds to start getting completions without new change in the editor. You can change this value to get better experience in coding with our extension and to avoid some unuseful completion suggestions."
+                    },
+                    "Codegeex.DecodingStrategies.temp": {
+                        "type": "number",
+                        "default": 0.8,
+                        "maximum": 1,
+                        "minimum": 0.01,
+                        "description": "Temp controls the randomness of output, range: [0.01, 1]. Higher temperature means more randomness, and the model will return creative results. "
+                    },
+                    "Codegeex.DecodingStrategies.topp": {
+                        "type": "number",
+                        "default": 0.95,
+                        "maximum": 1,
+                        "minimum": 0,
+                        "description": "Top-p keeps the candidate tokens whose probabilities sum to p, range [0, 1]. Top-p=0 means disabled."
+                    },
+                    "Codegeex.DecodingStrategies.topk": {
+                        "type": "number",
+                        "default": 0,
+                        "maximum": 40,
+                        "minimum": 0,
+                        "description": "Top-k keeps the k candidate tokens with the highest probabilities, range [0, 40]. Top-k=0 means disabled."
+                    },
+                    "Codegeex.DisabledFor": {
+                        "type": "object",
+                        "additionalProperties": "string",
+                        "default": {},
+                        "description": "DisabledFor is a list of specific languages that will be disabled temporarily for the extension, you can set manully language* as the key and then set the value true to disable a language or false to re-enable it in workspace settings (this will need to restart vscode) or do this by clicking icon in the status bar.\n*language should be a valid vscode language id, like python, shellscript, csharp, objective-cpp and etc. You can click the language option in status bar to find the list and language ids are in the parentheses."
+                    },
+                    "Codegeex.EnableExtension": {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "This will decide if you enable the stealth mode of the extension."
+                    },
+                    "Codegeex.GenerationPreference": {
+                        "type": "string",
+                        "enum": [
+                            "automatic",
+                            "line by line"
+                        ],
+                        "description": "You can choose the preference when generating code. If you choose automatic, the extension will generate whether a block or a line depending on your input. If you choose line by line, the extension will generate a code line, a comment line or a code line and a comment line for you each time.",
+                        "default": "automatic"
+                    },
+                    "Codegeex.OnlyKeyControl": {
+                        "type": "boolean",
+                        "default": null,
+                        "description": "This will decide if you want to get suggestions only in need by pressing alt/option+n"
+                    },
+                    "Codegeex.PromptTemplates(Experimental)": {
+                        "type": "object",
+                        "description": "Prompts for code generation. There is a few prompts provided by default. Add a mapping here to use your own. For example: {\"myCustomPrompt\": \"/Users/foobar/Downloads/prompt.txt\"}",
+                        "additionalProperties": "string",
+                        "default": {
+                            "explanation": ""
+                        }
+                    },
+                    "Codegeex.Privacy": {
+                        "type": "boolean",
+                        "description": "Accept sharing the generated code only for research purposes to make CodeGeeX better. Otherwise, the code won't be stored and is only used to assist your programming.",
+                        "default": null
+                    },
+                    "Codegeex.Survey": {
+                        "type": "boolean",
+                        "default": null,
+                        "markdownDescription": "This is decided by if you have chosen to make a survey. If you want to make the survey again, you can click the link:<br>[EN]:https://wj.qq.com/s2/11260705/6cd6/<br>[CN]:https://wj.qq.com/s2/11259178/fd49/"
+                    },
+                    "Codegeex.Translation": {
+                        "type": "string",
+                        "enum": [
+                            "replace",
+                            "comment"
+                        ],
+                        "default": "comment",
+                        "description": "When inserting code translated, you want to ___ original code"
+                    }
+                }
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "codegeex.interactive-mode",
+                "key": "ctrl+enter",
+                "mac": "ctrl+enter",
+                "when": "editorFocus && !editorReadonly"
+            },
+            {
+                "command": "codegeex.prompt-mode",
+                "key": "Alt+T",
+                "when": "editorFocus && !editorReadonly"
+            },
+            {
+                "command": "codegeex.new-completions",
+                "key": "Alt+N",
+                "when": "editorFocus && !editorReadonly"
+            },
+            {
+                "command": "codegeex.translate-mode",
+                "key": "Alt+ctrl+T",
+                "when": "editorFocus && !editorReadonly"
+            },
+            {
+                "command": "codegeex.welcome-page",
+                "key": "Alt+ctrl+W"
+            },
+            {
+                "command": "editor.action.inlineSuggest.commit",
+                "key": "Tab",
+                "when": "editorFocus &&!editorReadonly && inlineSuggestionVisible"
+            }
+        ],
+        "menus": {
+            "editor/context": [
+                {
+                    "command": "codegeex.translate-mode",
+                    "group": "group1@1"
+                },
+                {
+                    "command": "codegeex.interactive-mode",
+                    "group": "group1@2"
+                },
+                {
+                    "command": "codegeex.prompt-mode",
+                    "group": "group1@3"
+                }
+            ]
+        },
+        "icons": {
+            "codegeex-dark": {
+                "description": "CodeGeeX icon",
+                "default": {
+                    "fontPath": "./codegeex.woff",
+                    "fontCharacter": "\\E001"
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile && npm run lint",
+        "lint": "eslint src --ext ts",
+        "test": "node ./out/test/runTest.js"
+    },
+    "devDependencies": {
+        "@types/glob": "^7.2.0",
+        "@types/mocha": "^9.1.1",
+        "@types/node": "16.x",
+        "@types/vscode": "^1.68.0",
+        "@typescript-eslint/eslint-plugin": "^5.31.0",
+        "@typescript-eslint/parser": "^5.31.0",
+        "@vscode/test-electron": "^2.1.5",
+        "eslint": "^8.20.0",
+        "glob": "^8.0.3",
+        "mocha": "^10.0.0",
+        "typescript": "^4.7.4"
+    },
+    "dependencies": {
+        "@vscode/webview-ui-toolkit": "^1.2.0",
+        "axios": "^0.24.0",
+        "vsce": "^1.100.2"
+    }
 }

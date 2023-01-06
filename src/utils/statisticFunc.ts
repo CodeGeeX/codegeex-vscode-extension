@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import axios from "axios";
 import * as os from "os";
-//import welcomePage from './welcomePage';
 import { apiHerf, extensionId, extensionVersion } from "../param/constparams";
 
 const privacy = vscode.workspace.getConfiguration("Codegeex").get("Privacy");
@@ -52,8 +51,7 @@ export function getStartData(
             lang: lang,
             mode: mode ? mode : null,
             extensionId: extensionId,
-            extensionVersion: extensionVersion
-
+            extensionVersion: extensionVersion,
         };
         try {
             axios
@@ -92,7 +90,7 @@ export function getEndData(
             numContent: privacy ? completions?.toString() : null,
             whetherAdopt: isAdopted,
             extensionId: extensionId,
-            extensionVersion: extensionVersion
+            extensionVersion: extensionVersion,
         };
         try {
             axios
@@ -114,19 +112,20 @@ export function getTotalRequestNum(): Promise<number> {
     return new Promise((resolve, reject) => {
         try {
             axios
-                .get(`${apiHerf}/tracking/selectByVscodeMachineIdTotal?vscodeMachineId=${vscode.env.machineId}`)
+                .get(
+                    `${apiHerf}/tracking/selectByVscodeMachineIdTotal?vscodeMachineId=${vscode.env.machineId}`
+                )
                 .then((res) => {
                     console.log("获取总请求数", res);
-                    if(res.data.code === 200 && res.data.data) {
+                    if (res.data.code === 200 && res.data.data) {
                         resolve(res.data.data);
                     } else {
                         reject("error");
                     }
-                })
-            } catch (e) {
-                console.log(e);
-                reject("error");
-            }
-
-        });
+                });
+        } catch (e) {
+            console.log(e);
+            reject("error");
+        }
+    });
 }

@@ -1,5 +1,5 @@
 import { EventEmitter } from "stream";
-import { ExtensionContext, WebviewPanel,window } from "vscode";
+import { ExtensionContext, WebviewPanel, window } from "vscode";
 import createWebView from "./utils/createWebView";
 import { controls } from "./param/configures";
 
@@ -92,9 +92,8 @@ export default async function welcomePage(
         }
         switchTo(1);
         </script>
-    </div>`;    
+    </div>`;
     await createWebView(context, content);
-    
 }
 
 const keys = `

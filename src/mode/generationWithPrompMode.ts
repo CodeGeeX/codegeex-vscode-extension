@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { templates } from "../param/configures";
 import { templateExplanation } from "../templates/explanation";
 import codeGenByTemplate from "../utils/codeGenByTemplate";
 import readTemplate from "../utils/readTemplate";
@@ -10,12 +11,6 @@ export async function generateWithPromptMode(
 ) {
     var items: vscode.QuickPickItem[] = [];
 
-    let currentDocument = editor.document;
-    let configuration = vscode.workspace.getConfiguration(
-        "",
-        currentDocument?.uri
-    );
-    let templates = configuration.get("Codegeex.PromptTemplates", {});
     const keys = Object.keys(templates);
 
     items.push({

@@ -1,7 +1,6 @@
 import axios from "axios";
 import * as https from "https";
-import * as vscode from "vscode";
-import { apiKey, apiSecret, apiHerf } from "../param/constparams";
+import { apiKey, apiSecret } from "../localconfig";
 import { temp, topk, topp } from "../param/configures";
 export type GetCodeTranslation = {
     translation: Array<string>;
@@ -11,8 +10,7 @@ export function getCodeTranslation(
     src_lang: string,
     dst_lang: string
 ): Promise<GetCodeTranslation> {
-    //const API_URL = `https://tianqi.aminer.cn/api/v2/multilingual_code/translate`;
-    const API_URL = `https://tianqi.aminer.cn/api/v2/multilingual_code_translate`; //`https://wudao.aminer.cn/os/api/api/v2/multilingual_code/translate`;
+    const API_URL = `https://tianqi.aminer.cn/api/v2/multilingual_code_translate`;
 
     return new Promise((resolve, reject) => {
         let payload = {};
@@ -34,7 +32,7 @@ export function getCodeTranslation(
         });
 
         axios
-            .post(API_URL, payload, { httpsAgent: agent, timeout: 120000 })
+            .post(API_URL, payload, { timeout: 120000 })
             .then((res) => {
                 console.log(res);
                 if (res?.data.status === 0) {

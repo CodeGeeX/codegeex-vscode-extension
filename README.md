@@ -10,11 +10,11 @@
 ![CodeGeeX vscode extension last update](https://img.shields.io/visual-studio-marketplace/last-updated/aminer.codegeex?colorA=0B9FE0&colorB=brightgreen)
 [![CodeGeeX github stars](https://img.shields.io/github/stars/THUDM/CodeGeeX?style=social)](https://github.com/THUDM/CodeGeeX)
 
-We introduce CodeGeeX, a open source large-scale multilingual code generation model with 13 billion parameters, pretrained on a large code corpus of more than 20 programming languages. With CodeGeeX, we can generate codes by only providing natural language descriptions, complete any code snippet, or translate codes to other programming languages, etc. CodeGeeX also provides customizable features (**Prompt Mode**) to help you configure your own programming assistant. Happy coding!
+CodeGeeX is an AI-based coding assistant, which can suggest code in the current or following lines.  It is powered by a large-scale multilingual code generation model with 13 billion parameters, pretrained on a large code corpus of more than 20 programming languages.(For more information, please check out our [Homepage](https://models.aminer.cn/codegeex/) and [GitHub repo](https://github.com/THUDM/CodeGeeX).) 
 
-For more information, please check out our [Homepage](https://models.aminer.cn/codegeex/) and [GitHub repo](https://github.com/THUDM/CodeGeeX). 
+In addition, with the large-scale model, CodeGeeX can translate codes to other programming languages, and  provides customizable features (**Prompt Mode**) to help you configure your own programming assistant. Happy coding!
 
-Please kindly let us know if you encounter any problem or have any suggestion, via [codegeex@aminer.cn](mailto:codegeex@aminer.cn). Or you can also fill the survey to tell us about all your feelings for our extension[EN](https://wj.qq.com/s2/11260705/6cd6/)[CN](https://wj.qq.com/s2/11259178/fd49/).
+Please kindly let us know if you encounter any problem or have any suggestion, via [codegeex@aminer.cn](mailto:codegeex@aminer.cn). Or you can also fill out the survey(https://wj.qq.com/s2/11260705/6cd6/)/问卷(https://wj.qq.com/s2/11259178/fd49/) to tell us about all your feelings for our extension.
 
 ## Basic Usage
 Make sure vscode version is >= 1.68.0. Install the extension and enable it globally. There are three modes of usage:

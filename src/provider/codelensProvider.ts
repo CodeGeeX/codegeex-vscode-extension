@@ -8,7 +8,6 @@ export const codelensProvider = new (class {
     }
     addEl(lineNum: number, text: string, commandid: string, mode?: string) {
         let range;
-
         range = new vscode.Range(lineNum, 0, lineNum, 0);
 
         this.codelenses.push(

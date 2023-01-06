@@ -36,8 +36,11 @@ export const candidateNum = parseInt(candidateNum_str);
 export const needGuide = configuration.get("NeedGuide");
 export const translationInsertMode = configuration.get("Translation");
 export const enableExtension = configuration.get("EnableExtension", true);
-export const acceptedsurvey = configuration.get("Survey",null);
-export const completionDelay = configuration.get('CompletionDelay',0.5);
+export const acceptedsurvey = configuration.get("Survey", null);
+export const completionDelay = configuration.get("CompletionDelay", 0.5);
+export const choseModel = configuration.get("Codex.Model");
+export const templates = configuration.get("PromptTemplates(Experimental)", {});
+export const onlyKeyControl = configuration.get("OnlyKeyControl");
 export const controls = {
     interactiveMode: {
         mac: "Control + Enter",

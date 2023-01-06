@@ -1,6 +1,7 @@
 import axios from "axios";
 import * as https from "https";
 import * as vscode from "vscode";
+import { apiHref } from "../localconfig";
 import { temp, topp, topk, generationPreference } from "../param/configures";
 import { getEndData, getStartData } from "./statisticFunc";
 
@@ -19,14 +20,14 @@ export function getCodeCompletions(
 ): Promise<GetCodeCompletions> {
     let API_URL = "";
     if (mode === "prompt") {
-        API_URL = `https://tianqi.aminer.cn/api/v2/multilingual_code_generate_block`;
+        API_URL = `${apiHref}/multilingual_code_generate_block`;
     } else if (mode === "interactive") {
-        API_URL = `https://tianqi.aminer.cn/api/v2/multilingual_code_generate_adapt`;
+        API_URL = `${apiHref}/multilingual_code_generate_adapt`;
     } else {
         if (generationPreference === "line by line") {
-            API_URL = `https://tianqi.aminer.cn/api/v2/multilingual_code_generate`;
+            API_URL = `${apiHref}/multilingual_code_generate`;
         } else {
-            API_URL = `https://tianqi.aminer.cn/api/v2/multilingual_code_generate_adapt`;
+            API_URL = `${apiHref}/multilingual_code_generate_adapt`;
         }
     }
     return new Promise(async (resolve, reject) => {
@@ -86,6 +87,7 @@ export function getCodeCompletions(
         }
         console.log(inputText);
         let commandid: string;
+        let time1 = new Date().getTime();
         try {
             commandid = await getStartData(inputText, prompt, lang, mode);
         } catch (err) {
@@ -93,8 +95,9 @@ export function getCodeCompletions(
             commandid = "";
         }
         try {
+            let time2 = new Date().getTime();
             axios
-                .post(API_URL, payload, { httpsAgent: agent, timeout: 120000 })
+                .post(API_URL, payload, { timeout: 120000 })
                 .then(async (res) => {
                     console.log(res);
                     if (res?.data.status === 0) {
@@ -107,16 +110,16 @@ export function getCodeCompletions(
 
                             completions.push(completion);
                         }
+                        let timeEnd = new Date().getTime();
+                        console.log(timeEnd - time1, timeEnd - time2);
                         resolve({ completions, commandid });
                     } else {
                         console.log(res);
-                        try{
-                            
+                        try {
                             await getEndData(commandid, res.data.message, "No");
-                        }catch(err){
+                        } catch (err) {
                             console.log(err);
                         }
-                            
                         reject(res.data.message);
                     }
                 })
