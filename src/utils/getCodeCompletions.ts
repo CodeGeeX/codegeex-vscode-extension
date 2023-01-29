@@ -85,7 +85,6 @@ export function getCodeCompletions(
         } else {
             inputText = prompt;
         }
-        console.log(inputText);
         let commandid: string;
         let time1 = new Date().getTime();
         try {
@@ -97,9 +96,12 @@ export function getCodeCompletions(
         try {
             let time2 = new Date().getTime();
             axios
-                .post(API_URL, payload, { timeout: 120000 })
+                .post(API_URL, payload, { proxy: false, timeout: 120000 })
                 .then(async (res) => {
                     console.log(res);
+                    console.log(
+                        "process time: " + res.data.result.process_time
+                    );
                     if (res?.data.status === 0) {
                         let codeArray = res?.data.result.output.code;
                         const completions = Array<string>();
@@ -107,14 +109,13 @@ export function getCodeCompletions(
                             const completion = codeArray[i];
                             let tmpstr = completion;
                             if (tmpstr.trim() === "") continue;
-
+                            if (completions.includes(completion)) continue;
                             completions.push(completion);
                         }
                         let timeEnd = new Date().getTime();
                         console.log(timeEnd - time1, timeEnd - time2);
                         resolve({ completions, commandid });
                     } else {
-                        console.log(res);
                         try {
                             await getEndData(commandid, res.data.message, "No");
                         } catch (err) {

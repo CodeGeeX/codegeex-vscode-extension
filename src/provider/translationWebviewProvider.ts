@@ -50,7 +50,6 @@ export default class translationWebviewProvider implements WebviewViewProvider {
             "webview-ui",
             "main.js",
         ]);
-        console.log(mainUri);
         const stylesUri = getUri(webview, extensionUri, [
             "webview-ui",
             "styles.css",
@@ -241,7 +240,6 @@ Here is the code translated from the input
                         console.log(err);
                         commandid = "";
                     }
-                    console.log(result.translation[0]);
                     webviewView.webview.postMessage({
                         command: "code.translate",
                         payload: result.translation[0],

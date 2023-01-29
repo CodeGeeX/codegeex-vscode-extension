@@ -1,5 +1,27 @@
 # Change Log
 
+v1.1.2 (2023-01-17)
+
+- Fix some known issues
+
+v1.1.1 (2023-01-10)
+
+- Fix some known bugs
+
+- Improve the quality of suggestions
+
+- Change the keybinding of command a new line from ``Alt/option+N`` to ``Alt/option+\``
+
+v1.1.0 (2023-01-03)
+
+- Fix some known bugs
+
+- Add translation component to activity bar
+
+- Add new option Only Key Control, to get suggestions only in need (command: ``Alt/option + N`` to get suggestions in this mode)
+
+- Add conditions to key ``Tab``, if there is some suggestions, press ``Tab`` to accept the current suggestion, otherwise, press to indent
+
 v1.0.9 (2022-12-12)
 
 - Fix some known bugs

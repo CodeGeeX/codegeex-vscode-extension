@@ -18,6 +18,89 @@ let delay: number = completionDelay * 1000;
 // let timeExecute: number = 2500;
 // let last5ExecuteTime  = [2500,2500,2500,2500,2500];
 
+function middleOfLineWontComplete(editor: any, document: any) {
+    const cursorPosition = editor.selection.active;
+    let currentLine = document?.lineAt(cursorPosition.line);
+    let lineEndPosition = currentLine?.range.end;
+    let selectionTrailingString: vscode.Selection;
+
+    selectionTrailingString = new vscode.Selection(
+        cursorPosition.line,
+        cursorPosition.character,
+        cursorPosition.line,
+        lineEndPosition.character + 1
+    );
+    let trailingString = document.getText(selectionTrailingString);
+    var re = /^[\]\{\}\); \n\r\t\'\"]*$/;
+    if (re.test(trailingString)) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function isAtTheMiddleOfLine(editor: any, document: any) {
+    const cursorPosition = editor.selection.active;
+    let currentLine = document?.lineAt(cursorPosition.line);
+    let lineEndPosition = currentLine?.range.end;
+    let selectionTrailingString: vscode.Selection;
+
+    selectionTrailingString = new vscode.Selection(
+        cursorPosition.line,
+        cursorPosition.character,
+        cursorPosition.line,
+        lineEndPosition.character + 1
+    );
+    let trailingString = document.getText(selectionTrailingString);
+    let trimmed = trailingString.trim();
+    return trimmed.length !== 0;
+}
+
+function removeTrailingCharsByReplacement(
+    completion: string,
+    replacement: string
+) {
+    for (let ch of replacement) {
+        if (!isBracketBalanced(completion, ch)) {
+            completion = replaceLast(completion, ch, "");
+        }
+    }
+    return completion;
+}
+
+function replaceLast(str: string, toReplace: string, replacement: string) {
+    let pos = str.lastIndexOf(toReplace);
+    if (pos > -1) {
+        return (
+            str.substring(0, pos) +
+            replacement +
+            str.substring(pos + toReplace.length)
+        );
+    } else {
+        return str;
+    }
+}
+
+function isBracketBalanced(str: string, character: string) {
+    let count = 0;
+    for (let ch of str) {
+        if (ch === character) {
+            count++;
+        }
+        if (
+            (character === "{" && ch === "}") ||
+            (character === "[" && ch === "]") ||
+            (character === "(" && ch === ")") ||
+            (character === "}" && ch === "{") ||
+            (character === "]" && ch === "[") ||
+            (character === ")" && ch === "(")
+        ) {
+            count--;
+        }
+    }
+    return count === 0;
+}
+
 interface MyInlineCompletionItem extends vscode.InlineCompletionItem {
     trackingId: number;
 }
@@ -73,6 +156,12 @@ export default function inlineCompletionProvider(
                 cursorPosition.character
             );
             let textBeforeCursor = document.getText(selection);
+            if (
+                cursorPosition.character === 0 &&
+                textBeforeCursor[textBeforeCursor.length - 1] !== "\n"
+            ) {
+                textBeforeCursor += "\n";
+            }
             if (vscode.window.activeNotebookEditor) {
                 const cells =
                     vscode.window.activeNotebookEditor.notebook.getCells();
@@ -98,9 +187,10 @@ export default function inlineCompletionProvider(
                 cursorPosition.line,
                 cursorPosition.character + 1
             );
-            let nextChar = document.getText(selectionNextChar);
-            const checkString = "]}) \n\t'\"";
-            if (!checkString.includes(nextChar)) {
+            // let nextChar = document.getText(selectionNextChar);
+            // const checkString = "]}) \n\t'\"";
+            // if (!checkString.includes(nextChar)) {
+            if (middleOfLineWontComplete(editor, document)) {
                 console.log("不进行补充");
                 updateStatusBarItem(myStatusBarItem, g_isLoading, false, "");
                 return;
@@ -268,7 +358,38 @@ export default function inlineCompletionProvider(
                 let items = new Array<MyInlineCompletionItem>();
                 let cursorPosition = editor.selection.active;
                 for (let i = 0; i < rs.completions.length; i++) {
+                    let completion = rs.completions[i];
+                    if (isAtTheMiddleOfLine(editor, document)) {
+                        const cursorPosition = editor.selection.active;
+                        let currentLine = document?.lineAt(cursorPosition.line);
+                        let lineEndPosition = currentLine?.range.end;
+                        let selectionTrailingString: vscode.Selection;
+
+                        selectionTrailingString = new vscode.Selection(
+                            cursorPosition.line,
+                            cursorPosition.character,
+                            cursorPosition.line,
+                            lineEndPosition.character + 1
+                        );
+                        let trailingString = document.getText(
+                            selectionTrailingString
+                        );
+                        completion = removeTrailingCharsByReplacement(
+                            completion,
+                            trailingString
+                        );
+                        if (
+                            completion.trimEnd().slice(-1) === "{" ||
+                            completion.trimEnd().slice(-1) === ";" ||
+                            completion.trimEnd().slice(-1) === ":"
+                        ) {
+                            completion = completion
+                                .trimEnd()
+                                .substring(0, completion.length - 1);
+                        }
+                    }
                     items.push({
+                        // insertText: completion,
                         insertText: rs.completions[i],
                         // range: new vscode.Range(endPosition.translate(0, rs.completions.length), endPosition),
                         range: new vscode.Range(

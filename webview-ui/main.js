@@ -91,7 +91,7 @@ function setVSCodeMessageListener() {
                 break;
             case "code.changeDstLang":
                 const dstLang = document.getElementById("dstLang");
-                if(dstLang.value !== event.data.dstLang){
+                if (dstLang.value !== event.data.dstLang) {
                     dstLang.value = event.data.dstLang;
                     //displayData('',dstLang);
                 }

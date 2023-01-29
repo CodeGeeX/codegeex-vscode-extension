@@ -9,22 +9,26 @@ export function getOpenExtensionData(): Promise<string> {
     return new Promise((resolve, reject) => {
         try {
             axios
-                .post(`${apiHerf}/tracking/insertVscodeStartRecord`, {
-                    vscodeMachineId: vscode.env.machineId,
-                    vscodeSessionId: vscode.env.sessionId,
-                    platformVersion: os.release(),
-                    systemOs: os.type(),
-                    extensionId: extensionId,
-                    extensionVersion: extensionVersion,
-                    nodeArch: os.arch(),
-                    isNewAppInstall: vscode.env.isNewAppInstall,
-                    vscodeVersion: vscode.version,
-                    product: vscode.env.appHost,
-                    uikind: vscode.env.uiKind,
-                    remoteName: vscode.env.remoteName,
-                })
+                .post(
+                    `${apiHerf}/tracking/insertVscodeStartRecord`,
+                    {
+                        vscodeMachineId: vscode.env.machineId,
+                        vscodeSessionId: vscode.env.sessionId,
+                        platformVersion: os.release(),
+                        systemOs: os.type(),
+                        extensionId: extensionId,
+                        extensionVersion: extensionVersion,
+                        nodeArch: os.arch(),
+                        isNewAppInstall: vscode.env.isNewAppInstall,
+                        vscodeVersion: vscode.version,
+                        product: vscode.env.appHost,
+                        uikind: vscode.env.uiKind,
+                        remoteName: vscode.env.remoteName,
+                    },
+                    { proxy: false }
+                )
                 .then((res) => {
-                    console.log(res);
+                    console.log("写入开机信息", res);
                     resolve(res.data.msg);
                 })
                 .catch((err) => {
@@ -55,7 +59,10 @@ export function getStartData(
         };
         try {
             axios
-                .post(`${apiHerf}/tracking/vsCodeOperationRecord`, startParam)
+                .post(`${apiHerf}/tracking/vsCodeOperationRecord`, startParam, {
+                    proxy: false,
+                    timeout: 1000,
+                })
                 .then((res) => {
                     console.log("开始请求测试", res);
                     let commandid = res.data.data.id || "";
@@ -94,7 +101,10 @@ export function getEndData(
         };
         try {
             axios
-                .post(`${apiHerf}/tracking/vsCodeOperationRecord`, endparam)
+                .post(`${apiHerf}/tracking/vsCodeOperationRecord`, endparam, {
+                    proxy: false,
+                    timeout: 1000,
+                })
                 .then((res) => {
                     console.log("测试结束埋点", res);
                     resolve("");
@@ -113,7 +123,8 @@ export function getTotalRequestNum(): Promise<number> {
         try {
             axios
                 .get(
-                    `${apiHerf}/tracking/selectByVscodeMachineIdTotal?vscodeMachineId=${vscode.env.machineId}`
+                    `${apiHerf}/tracking/selectByVscodeMachineIdTotal?vscodeMachineId=${vscode.env.machineId}`,
+                    { proxy: false }
                 )
                 .then((res) => {
                     console.log("获取总请求数", res);

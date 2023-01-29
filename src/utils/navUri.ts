@@ -6,6 +6,7 @@ export const navUri = async (
     mode: string
 ) => {
     const doc = await vscode.workspace.openTextDocument(uri);
+
     await vscode.window.showTextDocument(doc, {
         viewColumn: vscode.ViewColumn.Beside,
         preview: true,

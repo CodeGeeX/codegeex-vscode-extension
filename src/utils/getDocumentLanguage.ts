@@ -1,8 +1,6 @@
 import { TextEditor } from "vscode";
 export default function getDocumentLanguage(editor: TextEditor) {
     const documentLanguageId: string = editor.document.languageId;
-    console.log("documentLanguageId");
-    console.log(documentLanguageId);
     let lang = "";
     switch (documentLanguageId) {
         case "cpp":

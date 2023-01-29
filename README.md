@@ -5,7 +5,6 @@
 ![CodeGeeX license](https://img.shields.io/github/license/THUDM/CodeGeeX?colorA=0B9FE0&colorB=brightgreen)
 ![CodeGeeX vscode extension version](https://img.shields.io/visual-studio-marketplace/v/aminer.codegeex?colorA=0B9FE0&colorB=brightgreen)
 ![CodeGeeX download](https://img.shields.io/visual-studio-marketplace/d/aminer.codegeex?colorA=0B9FE0&colorB=brightgreen)
-![CodeGeeX API calls per week](https://img.shields.io/badge/dynamic/json?label=API%20calls&query=%24.result.count&suffix=%2Fweek&url=http%3A%2F%2Ftianqi.aminer.cn%2Fapi%2Fv1%2Fapi%2Fcodegeex%2Fdashboard%3Ftime_type%3Dweeks&colorA=0B9FE0&colorB=brightgreen)
 ![CodeGeeX vscode extension rating](https://img.shields.io/visual-studio-marketplace/stars/aminer.codegeex?colorA=0B9FE0&colorB=brightgreen)
 ![CodeGeeX vscode extension last update](https://img.shields.io/visual-studio-marketplace/last-updated/aminer.codegeex?colorA=0B9FE0&colorB=brightgreen)
 [![CodeGeeX github stars](https://img.shields.io/github/stars/THUDM/CodeGeeX?style=social)](https://github.com/THUDM/CodeGeeX)
@@ -14,7 +13,17 @@ CodeGeeX is an AI-based coding assistant, which can suggest code in the current 
 
 In addition, with the large-scale model, CodeGeeX can translate codes to other programming languages, and  provides customizable features (**Prompt Mode**) to help you configure your own programming assistant. Happy coding!
 
-Please kindly let us know if you encounter any problem or have any suggestion, via [codegeex@aminer.cn](mailto:codegeex@aminer.cn). Or you can also fill out the survey(https://wj.qq.com/s2/11260705/6cd6/)/问卷(https://wj.qq.com/s2/11259178/fd49/) to tell us about all your feelings for our extension.
+Please kindly let us know if you encounter any problem or have any suggestion, via [codegeex@aminer.cn](mailto:codegeex@aminer.cn). Or you can join our [Slack](https://join.slack.com/t/codegeexworkspace/shared_invite/zt-1m76zecsi-~JW59Jmvx09lX4Pqv9oE_w) or [Telegram](https://t.me/+IipIayJ32B1jOTg1) or [WeChat/微信群](https://wj.qq.com/s2/11274205/a15b/)  to give us your feedback or get support. Furthermore, welcome to fill out the [survey](https://wj.qq.com/s2/11260705/6cd6/)/[问卷](https://wj.qq.com/s2/11259178/fd49/) to tell us about all your feelings for our extension.
+
+### Quick menu:
+
+**[Basic Usage](#basic-usage)**<br/>
+**[Privacy](#privacy)**<br/>
+**[Guidance](#guidance)**<br/>
+&emsp;***[Stealth Mode](#stealth-mode)***<br />
+&emsp;***[Interactive Mode](#interactive-mode)***<br/>
+&emsp;***[Translation Mode](#translation-mode)***<br/>
+&emsp;***[Prompt Mode](#prompt-mode)***<br/>
 
 ## Basic Usage
 Make sure vscode version is >= 1.68.0. Install the extension and enable it globally. There are three modes of usage:
@@ -31,7 +40,7 @@ We highly respect the privacy of your code. The code is only used as the input o
 ## Guidance
 Please see the details and examples for how to use the three modes in CodeGeeX:
 ### Stealth mode
-In this mode, CodeGeeX will start generating codes when you stop writing (the icon at the bottom of VSCode starts spinning). When the generated code is shown in gray, just press ``Tab`` to insert the generated codes. You can also press ``Alt/Option+[`` or ``]`` to change between candidates. If you are not satisfied with the current suggestions, you can also press ``Alt/Option+N`` to get new suggestions. Change the number of candidates in the extension settings ``Candidate Num`` (more candidates will slow down the generation speed). **Note**: The generation always starts at the current position of your cursor, thus if you modify the code before the generation is finished, it will probably cause bugs. We keep working on making the generation faster.
+In this mode, CodeGeeX will start generating codes when you stop writing (the icon at the bottom of VSCode starts spinning). When the generated code is shown in gray, just press ``Tab`` to insert the generated codes. You can also press ``Alt/Option+[`` or ``]`` to change between candidates. If you are not satisfied with the current suggestions, you can also press ``Alt/Option+\`` to get new suggestions. Change the number of candidates in the extension settings ``Candidate Num`` (more candidates will slow down the generation speed). **Note**: The generation always starts at the current position of your cursor, thus if you modify the code before the generation is finished, it will probably cause bugs. We keep working on making the generation faster.
 
 ![image](https://lfs.aminer.cn/misc/wangshan/pretrain/codegeex/bubble_sort_go.gif)
 

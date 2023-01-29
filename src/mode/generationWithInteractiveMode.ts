@@ -22,12 +22,18 @@ export default async function generationWithInteractiveMode(
         cursorPosition.character
     );
     let code_block = document.getText(selection);
+    if (
+        cursorPosition.character === 0 &&
+        code_block[code_block.length - 1] !== "\n"
+    ) {
+        code_block += "\n";
+    }
     code_block = code_block
         .replaceAll("#", hash)
         .replaceAll("+", addSignal)
         .replaceAll("&", andSignal);
     updateStatusBarItem(myStatusBarItem, g_isLoading, true, "");
-    await codegeexCodeGen(code_block.trim())
+    await codegeexCodeGen(code_block)
         .then(() =>
             updateStatusBarItem(myStatusBarItem, g_isLoading, false, "Done")
         )

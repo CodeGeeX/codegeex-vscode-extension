@@ -2,14 +2,14 @@
     "publisher": "AMiner",
     "name": "codegeex",
     "displayName": "CodeGeeX",
-    "description": "We introduce CodeGeeX, a large-scale multilingual code generative model with 13 billion parameters, pretrained on a large code corpus of more than 20 programming languages.",
-    "homepage": "https://models.aminer.cn/codegeex",
+    "description": "CodeGeeX is an AI-based coding assistant, which can suggest code in the current or following lines.  It is powered by a large-scale multilingual code generation model with 13 billion parameters, pretrained on a large code corpus of more than 20 programming languages.",
+    "homepage": "https://codegeex.ai",
     "repository": {
         "type": "git",
         "url": "https://github.com/THUDM/CodeGeeX"
     },
     "icon": "codegeex_logo.png",
-    "version": "1.1.0",
+    "version": "1.1.2",
     "engines": {
         "vscode": "^1.68.0"
     },
@@ -18,6 +18,19 @@
         "Snippets",
         "Machine Learning",
         "Other"
+    ],
+    "keywords": [
+        "python",
+        "go",
+        "java",
+        "javascript",
+        "c++",
+        "c#",
+        "php",
+        "typescript",
+        "ai",
+        "autocomplete",
+        "inline completion"
     ],
     "activationEvents": [
         "*"
@@ -106,12 +119,12 @@
                         "type": "object",
                         "additionalProperties": "string",
                         "default": {},
-                        "description": "DisabledFor is a list of specific languages that will be disabled temporarily for the extension, you can set manully language* as the key and then set the value true to disable a language or false to re-enable it in workspace settings (this will need to restart vscode) or do this by clicking icon in the status bar.\n*language should be a valid vscode language id, like python, shellscript, csharp, objective-cpp and etc. You can click the language option in status bar to find the list and language ids are in the parentheses."
+                        "markdownDescription": "DisabledFor is a list of specific languages that will be disabled temporarily for the extension, you can set manully language* as the key and then set the value true to disable a language or false to re-enable it settings (this will need to restart vscode) or do this by clicking icon in the status bar. <br/>* *language should be a valid vscode language id, like python, shellscript, csharp, objective-cpp and etc.* You can click the language option in status bar to find the list and language ids are in the parentheses."
                     },
                     "Codegeex.EnableExtension": {
                         "type": "boolean",
                         "default": true,
-                        "description": "This will decide if you enable the stealth mode of the extension."
+                        "description": "Check this if you want to enable stealth mode of the extension."
                     },
                     "Codegeex.GenerationPreference": {
                         "type": "string",
@@ -125,7 +138,7 @@
                     "Codegeex.OnlyKeyControl": {
                         "type": "boolean",
                         "default": null,
-                        "description": "This will decide if you want to get suggestions only in need by pressing alt/option+n"
+                        "description": "Check this if you want to get suggestions only in need by pressing alt/option+\\ in stealth mode."
                     },
                     "Codegeex.PromptTemplates(Experimental)": {
                         "type": "object",
@@ -143,7 +156,7 @@
                     "Codegeex.Survey": {
                         "type": "boolean",
                         "default": null,
-                        "markdownDescription": "This is decided by if you have chosen to make a survey. If you want to make the survey again, you can click the link:<br>[EN]:https://wj.qq.com/s2/11260705/6cd6/<br>[CN]:https://wj.qq.com/s2/11259178/fd49/"
+                        "markdownDescription": "This is decided by if you have chosen to make a survey. If you want to make the survey again, you can click the link: [survey](https://wj.qq.com/s2/11260705/6cd6/)/[问卷](https://wj.qq.com/s2/11259178/fd49/)"
                     },
                     "Codegeex.Translation": {
                         "type": "string",
@@ -152,7 +165,7 @@
                             "comment"
                         ],
                         "default": "comment",
-                        "description": "When inserting code translated, you want to ___ original code"
+                        "description": "When inserting code translated, you want to ___ original code when you use the translation mode."
                     }
                 }
             }
@@ -171,7 +184,7 @@
             },
             {
                 "command": "codegeex.new-completions",
-                "key": "Alt+N",
+                "key": "Alt+\\",
                 "when": "editorFocus && !editorReadonly"
             },
             {

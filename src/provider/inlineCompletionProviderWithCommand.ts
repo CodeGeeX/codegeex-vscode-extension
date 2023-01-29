@@ -76,6 +76,12 @@ export default function inlineCompletionProviderWithCommand(
                 cursorPosition.character
             );
             let textBeforeCursor = document.getText(selection);
+            if (
+                cursorPosition.character === 0 &&
+                textBeforeCursor[textBeforeCursor.length - 1] !== "\n"
+            ) {
+                textBeforeCursor += "\n";
+            }
             if (vscode.window.activeNotebookEditor) {
                 const cells =
                     vscode.window.activeNotebookEditor.notebook.getCells();

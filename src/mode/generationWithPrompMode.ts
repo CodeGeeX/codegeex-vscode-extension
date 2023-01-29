@@ -20,12 +20,15 @@ export async function generateWithPromptMode(
     let custom_prompts = {};
     for (let key of keys) {
         if (key != "explanation") {
-            items.push({ label: key, description: "" });
-            // @ts-ignore
-            custom_prompts[key] = await readTemplate(templates[key]);
+            try {
+                // @ts-ignore
+                custom_prompts[key] = await readTemplate(templates[key]);
+                items.push({ label: key, description: "" });
+            } catch (err) {
+                console.log(err);
+            }
         }
     }
-    console.log(custom_prompts);
 
     vscode.window.showQuickPick(items).then((selection) => {
         if (!selection) {

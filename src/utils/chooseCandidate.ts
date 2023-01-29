@@ -30,7 +30,6 @@ export default function chooseCandidate(
                             lang,
                             "line"
                         ).replaceAll(comment, commentSignal.line || "#");
-                        console.log(commentedText);
                         editBuilder.replace(s, commentedText + "\n" + fn);
                     } else {
                         editBuilder.replace(s, fn);

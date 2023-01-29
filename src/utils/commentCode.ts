@@ -21,14 +21,11 @@ export default function commentCode(
         return comment + input.replaceAll("\n", "\n" + comment);
     }
     if (commentSignal.blockLeft && commentSignal.blockRight) {
-        console.log("test1");
         return commentSignal.blockLeft + input + commentSignal.blockRight;
     }
     if (commentSignal.line) {
-        console.log("test2");
         return comment + input.replaceAll("\n", "\n" + comment);
     }
-    console.log("test3");
     return input;
 }
 export function getCommentSignal(lang: string) {
@@ -64,7 +61,6 @@ export function getCommentSignal(lang: string) {
             };
             break;
         case "python":
-            console.log("python");
             commentSignal = {
                 blockLeft: '"""',
                 blockRight: '"""',

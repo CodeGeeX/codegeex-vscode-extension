@@ -169,13 +169,12 @@ export async function activate(context: vscode.ExtensionContext) {
     if (onlyKeyControl) {
         context.globalState.update("DisableInlineCompletion", true);
     } else {
+        context.globalState.update("DisableInlineCompletion", false);
         context.subscriptions.push(
-            //vscode.commands.registerCommand('codegeex.inline-completions',()=>
             vscode.languages.registerInlineCompletionItemProvider(
                 { pattern: "**" },
                 inlineProvider
             )
-            //)
         );
     }
 
@@ -204,6 +203,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 "EnableExtension"
             );
             if (editor) {
+                
                 changeIconColor(
                     //@ts-ignore
                     enableExtension,

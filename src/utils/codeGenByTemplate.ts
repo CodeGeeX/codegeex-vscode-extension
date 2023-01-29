@@ -18,7 +18,6 @@ export default async function codeGenByTemplate(
         let txt: string = document.getText(
             new vscode.Range(sel[x].start, sel[x].end)
         );
-        // console.log(txt)
         prompt_input += txt;
     }
     var selection = editor.selection;
@@ -59,7 +58,6 @@ export default async function codeGenByTemplate(
             iter = re.exec(templateStr);
         }
         console.log("about to request");
-        console.log(prompt);
         lang = getDocumentLanguage(editor);
         updateStatusBarItem(myStatusBarItem, g_isLoading, true, "");
         rs = await getCodeCompletions(

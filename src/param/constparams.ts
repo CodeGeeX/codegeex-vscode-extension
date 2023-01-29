@@ -4,7 +4,7 @@ import { localeCN } from "../locales/localeCN";
 import { localeEN } from "../locales/localeEN";
 
 export const extensionId = "aminer.codegeex";
-export const extensionVersion = "1.1.0";
+export const extensionVersion = "1.1.2";
 export const myScheme = "codegeex";
 
 //api to do the statistics of data

@@ -32,9 +32,8 @@ export function getCodeTranslation(
         });
 
         axios
-            .post(API_URL, payload, { timeout: 120000 })
+            .post(API_URL, payload, { proxy: false, timeout: 120000 })
             .then((res) => {
-                console.log(res);
                 if (res?.data.status === 0) {
                     let codeArray = res?.data.result.output.code;
                     const translation = Array<string>();
@@ -48,6 +47,7 @@ export function getCodeTranslation(
                     resolve({ translation });
                 } else {
                     console.log(res);
+                    reject("failed");
                 }
             })
             .catch((err) => {
