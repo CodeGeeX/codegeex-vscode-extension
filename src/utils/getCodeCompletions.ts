@@ -3,6 +3,7 @@ import * as https from "https";
 import * as vscode from "vscode";
 import { apiHref } from "../localconfig";
 import { temp, topp, topk, generationPreference } from "../param/configures";
+import { enableStats } from "../localconfig";
 import { getEndData, getStartData } from "./statisticFunc";
 
 export type GetCodeCompletions = {
@@ -87,11 +88,13 @@ export function getCodeCompletions(
         }
         let commandid: string;
         let time1 = new Date().getTime();
-        try {
-            commandid = await getStartData(inputText, prompt, lang, mode);
-        } catch (err) {
-            console.log(err);
-            commandid = "";
+        if (enableStats) {
+            try {
+                commandid = await getStartData(inputText, prompt, lang, mode);
+            } catch (err) {
+                console.log(err);
+                commandid = "";
+            }
         }
         try {
             let time2 = new Date().getTime();
@@ -116,10 +119,12 @@ export function getCodeCompletions(
                         console.log(timeEnd - time1, timeEnd - time2);
                         resolve({ completions, commandid });
                     } else {
-                        try {
-                            await getEndData(commandid, res.data.message, "No");
-                        } catch (err) {
-                            console.log(err);
+                        if (enableStats) {
+                            try {
+                                await getEndData(commandid, res.data.message, "No");
+                            } catch (err) {
+                                console.log(err);
+                            }
                         }
                         reject(res.data.message);
                     }

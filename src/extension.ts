@@ -2,6 +2,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 import * as vscode from "vscode";
 import { localeTag, myScheme } from "./param/constparams";
 import { checkPrivacy } from "./utils/checkPrivacy";
+import { enableStats } from "./localconfig";
 import {
     getEndData,
     getOpenExtensionData,
@@ -30,10 +31,12 @@ let myStatusBarItem: vscode.StatusBarItem;
 
 export async function activate(context: vscode.ExtensionContext) {
     console.log('Congratulations, your extension "CodeGeeX" is now active!');
-    try {
-        getOpenExtensionData();
-    } catch (err) {
-        console.error(err);
+    if (enableStats) {
+        try {
+            getOpenExtensionData();
+        } catch (err) {
+            console.error(err);
+        }
     }
     context.subscriptions.push(
         vscode.commands.registerCommand("codegeex.welcome-page", async () => {
@@ -147,10 +150,12 @@ export async function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand(
             "verifyInsertion",
             async (id, completions, acceptItem) => {
-                try {
-                    getEndData(id, "", "Yes", acceptItem, completions);
-                } catch (err) {
-                    console.log(err);
+                if (enableStats) {
+                    try {
+                        getEndData(id, "", "Yes", acceptItem, completions);
+                    } catch (err) {
+                        console.log(err);
+                    }
                 }
             }
         )
@@ -203,7 +208,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 "EnableExtension"
             );
             if (editor) {
-                
+
                 changeIconColor(
                     //@ts-ignore
                     enableExtension,

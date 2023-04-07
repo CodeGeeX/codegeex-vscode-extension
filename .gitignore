@@ -6,3 +6,4 @@ node_modules
 *.vsix
 *.js.map
 src/localconfig.ts
+package-lock.json

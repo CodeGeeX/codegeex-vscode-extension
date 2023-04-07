@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { translationInsertMode } from "../param/configures";
 import { comment } from "../param/constparams";
 import commentCode, { getCommentSignal } from "./commentCode";
+import { enableStats } from "../localconfig";
 import { getEndData } from "./statisticFunc";
 
 //function to insert code when user click 'use code'
@@ -37,12 +38,14 @@ export default function chooseCandidate(
                 } else {
                     editBuilder.replace(s, fn);
                 }
-                try {
-                    if (commandid.length !== 0) {
-                        await getEndData(commandid, "", "Yes", fn);
+                if (enableStats) {
+                    try {
+                        if (commandid.length !== 0) {
+                            await getEndData(commandid, "", "Yes", fn);
+                        }
+                    } catch (err) {
+                        console.log(err);
                     }
-                } catch (err) {
-                    console.log(err);
                 }
             })
             .then((success) => {

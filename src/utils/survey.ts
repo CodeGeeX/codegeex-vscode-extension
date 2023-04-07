@@ -1,3 +1,4 @@
+import { enableStats } from "../localconfig";
 import { getTotalRequestNum } from "./statisticFunc";
 import * as vscode from "vscode";
 import { localeTag, surveyUrl } from "../param/constparams";
@@ -5,11 +6,13 @@ import { acceptedsurvey } from "../param/configures";
 
 let totolRequestNum: number;
 export default async function survey() {
-    try {
-        totolRequestNum = await getTotalRequestNum();
-    } catch (err) {
-        console.error(err);
-        totolRequestNum = 0;
+    if (enableStats) {
+        try {
+            totolRequestNum = await getTotalRequestNum();
+        } catch (err) {
+            console.error(err);
+            totolRequestNum = 0;
+        }
     }
     let configuration = vscode.workspace.getConfiguration(
         "Codegeex",

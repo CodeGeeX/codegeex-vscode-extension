@@ -4,6 +4,7 @@ import { codegeexCodeTranslation } from "../utils/codegeexCodeTranslation";
 import { getCodeTranslation } from "../utils/getCodeTranslation";
 import getDocumentLanguage from "../utils/getDocumentLanguage";
 import { showQuickPick } from "../utils/showQuickPick";
+import { enableStats } from "../localconfig";
 import { getStartData } from "../utils/statisticFunc";
 import { updateStatusBarItem } from "../utils/updateStatusBarItem";
 
@@ -37,15 +38,17 @@ export default async function generationWithTranslationMode(
                 " Translating"
             );
             let commandid: string;
-            try {
-                commandid = await getStartData(
-                    text,
-                    text,
-                    `${srcLang}->${dstLang}`,
-                    "translation"
-                );
-            } catch (err) {
-                commandid = "";
+            if (getStartData) {
+                try {
+                    commandid = await getStartData(
+                        text,
+                        text,
+                        `${srcLang}->${dstLang}`,
+                        "translation"
+                    );
+                } catch (err) {
+                    commandid = "";
+                }
             }
             translation = await getCodeTranslation(text, srcLang, dstLang).then(
                 async (res) => {

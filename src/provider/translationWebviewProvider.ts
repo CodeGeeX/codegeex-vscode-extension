@@ -12,6 +12,7 @@ import { getCodeTranslation } from "../utils/getCodeTranslation";
 import getDocumentLangId from "../utils/getDocumentLangId";
 import getDocumentLanguage from "../utils/getDocumentLanguage";
 import getUri from "../utils/getUri";
+import { enableStats } from "../localconfig";
 import { getEndData, getStartData } from "../utils/statisticFunc";
 
 export default class translationWebviewProvider implements WebviewViewProvider {
@@ -229,16 +230,18 @@ Here is the code translated from the input
                             translation: [],
                         };
                     }
-                    try {
-                        commandid = await getStartData(
-                            original,
-                            original,
-                            `${srcLang}->${dstLang}`,
-                            "translation"
-                        );
-                    } catch (err) {
-                        console.log(err);
-                        commandid = "";
+                    if (enableStats) {
+                        try {
+                            commandid = await getStartData(
+                                original,
+                                original,
+                                `${srcLang}->${dstLang}`,
+                                "translation"
+                            );
+                        } catch (err) {
+                            console.log(err);
+                            commandid = "";
+                        }
                     }
                     webviewView.webview.postMessage({
                         command: "code.translate",
@@ -258,7 +261,7 @@ Here is the code translated from the input
 
                         editBuilder.replace(s, message.result);
                     });
-                    if (commandid.length > 0) {
+                    if ((commandid.length > 0) && (enableStats)) {
                         await getEndData(commandid, "", "Yes", message.result);
                     }
                     break;
