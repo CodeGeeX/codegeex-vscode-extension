@@ -38,7 +38,7 @@ export default async function generationWithTranslationMode(
                 " Translating"
             );
             let commandid: string;
-            if (getStartData) {
+            if (enableStats) {
                 try {
                     commandid = await getStartData(
                         text,
